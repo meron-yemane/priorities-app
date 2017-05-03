@@ -1,0 +1,19 @@
+{
+  "name": "priorities-app",
+  "version": "1.0.0",
+  "description": "An app designed to manage a user's priorities.",
+  "main": "server.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "express": "^4.15.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Meron Yemane",
+  "license": "ISC"
+}
