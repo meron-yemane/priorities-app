@@ -89,9 +89,18 @@
           </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
       </nav>
-      <div class="col-md-5">
-        <input type="text" class="form-control" placeholder="Enter your most important goal for the day.">
-      </div>
+      <form role="form">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="input-group input-group-lg">
+              <input type="text" class="form-control" placeholder="Enter your most important goal for the day.">
+              <div class="input-group-btn">
+                <button class="btn btn-primary" type="submit">Submit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
     </div>
     <div class="row" id="progresspage">
       <nav class="navbar navbar-default">
@@ -119,7 +128,7 @@
           </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
       </nav>
-      <h1 class="text-center text-info">Progress Page</h1>
+      <h3 class="text-center text-info">Here are some stats on your priority completion performance:</h3>
     </div>
   </body>
 </html>
