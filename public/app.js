@@ -35,8 +35,11 @@ $(document).ready(function() {
   });
 
   $(document).on("click", "#goal-button", function() {
-    console.log($("#goal-text").val())
-    var goalHtml = "<h2>Today's priority: " + $("#goal-text").val(); + "</h2>";
-    $("#homepage-goal-display").html(goalHtml);
-  })
+    console.log($("#goal-text").val());
+    if ($("#goal-text").val() != "" ) {
+      var goalHtml = "<h2>Today's priority: " + $("#goal-text").val(); + "</h2>";
+      $("#homepage-goal-display").html(goalHtml);
+      $("#goal-text").val("");
+    };
+  });
 });
