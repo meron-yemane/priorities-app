@@ -93,16 +93,17 @@
         <div class="row">
           <div class="col-md-8">
             <div class="input-group input-group-lg">
-              <input type="text" class="form-control" placeholder="Enter your most important goal for the day.">
+              <input type="text" class="form-control" id="goal-text" placeholder="Enter your most important goal for the day.">
               <div class="input-group-btn">
-                <button class="btn btn-primary" type="submit">Submit</button>
+                <button class="btn btn-primary" id="goal-button" type="submit">Submit</button>
               </div>
             </div>
           </div>
         </div>
       </form>
+      <div id="homepage-goal-display" class="row"></div>
     </div>
-    <div class="row" id="progresspage">
+    <div id="progresspage">
       <nav class="navbar navbar-default">
         <div class="container-fluid">
           <!-- Brand and toggle get grouped for better mobile display -->
@@ -129,6 +130,8 @@
         </div><!-- /.container-fluid -->
       </nav>
       <h3 class="text-center text-info">Here are some stats on your priority completion performance:</h3>
+      <div id="progressStats"></div>
+      <script type="text/javascript" src="client.js"></script>
     </div>
   </body>
 </html>
