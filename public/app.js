@@ -38,8 +38,23 @@ $(document).ready(function() {
     console.log($("#goal-text").val());
     if ($("#goal-text").val() != "" ) {
       var goalHtml = "<h2>Today's priority: " + $("#goal-text").val(); + "</h2>";
+      goalHtml += "<span id='goal-completion-mark' class='glyphicon glyphicon-remove' role='button' aria-hidden='true'></span>";
+      goalHtml += "<div><button type='button' class='btn btn-danger' id='delete-goal-button'>Delete</button></div>";
       $("#homepage-goal-display").html(goalHtml);
       $("#goal-text").val("");
     };
   });
+
+  $(document).on("click", "#goal-completion-mark", function() {
+    var goalHtml = "<h2>Today's priority: " + $("#goal-text").val(); + "</h2>";
+    goalHtml += "<span id='goal-completion-mark' class='glyphicon glyphicon-ok' aria-hidden='true'></span>";
+    $("#homepage-goal-display").html(goalHtml);
+  });
+
+  $(document).on("click", "#delete-goal-button", function(){
+    $("#homepage-goal-display").html("<p></p>");
+  });
+
+
+
 });

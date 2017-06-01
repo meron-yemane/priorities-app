@@ -3,43 +3,43 @@ var mock_goal_completion_history = {
     {
       "id": "11111",
       "goal": "Complete 3 hours of Thinkful",
-      "completed": "y",
+      "completed": true,
       "date_committed": 010217
     },
     {
       "id": "22222",
       "goal": "Take out trash",
-      "completed": "n",
+      "completed": false,
       "date_committed": 010317
     },
     {
       "id": "3333",
       "goal": "Practice clarinet for 6 hours",
-      "completed": "y",
+      "completed": true,
       "date_committed": 010417
     },
     {
       "id": "444444",
       "goal": "Complete 3 hours of Thinkful",
-      "completed": "y",
+      "completed": true,
       "date_committed": 010517
     },
     {
       "id": "555555",
       "goal": "Complete 8 hours of Thinkful",
-      "completed": "n",
+      "completed": false,
       "date_committed": 010617
     },
     {
       "id": "666666",
       "goal": "Walk dog",
-      "completed": "y",
+      "completed": true,
       "date_committed": 010717
     },
     {
       "id": "7777777",
       "goal": "Get 10 girls numbers",
-      "completed": "y",
+      "completed": true,
       "date_committed": 010817
     }
   ]
@@ -53,7 +53,7 @@ function getGoalPercentages(callbackFn) {
 function displayGoalPercentages(data) {
   var completed = 0;
   for (goal=0; goal<data.goal_completion_history.length; goal++) {
-    if (data.goal_completion_history[goal].completed === "y") {
+    if (data.goal_completion_history[goal].completed) {
       completed++
     };
   };
