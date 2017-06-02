@@ -1,4 +1,6 @@
 $(document).ready(function() {
+
+
   $("#signup, #homepage, #progresspage").hide();
 
 
@@ -38,8 +40,12 @@ $(document).ready(function() {
     console.log($("#goal-text").val());
     if ($("#goal-text").val() != "" ) {
       var goalHtml = "<h2>Today's priority: " + $("#goal-text").val(); + "</h2>";
-      goalHtml += "<span id='goal-completion-mark' class='glyphicon glyphicon-remove' role='button' aria-hidden='true'></span>";
-      goalHtml += "<div><button type='button' class='btn btn-danger' id='delete-goal-button'>Delete</button></div>";
+      goalHtml += "<span>    </span>";
+      goalHtml += "<span id='delete-goal-button' class='glyphicon glyphicon-remove' role='button' aria-hidden='true'></span>";
+      goalHtml += "<span>    </span>";
+      goalHtml += "<span id='goal-completion-mark' class='glyphicon glyphicon-ok' role='button' aria-hidden='true'></span>";
+      goalHtml += "<span>    </span>";
+      goalHtml += "<span id='goal-completion-mark' class='glyphicon glyphicon-pencil' role='button' aria-hidden='true'></span>";
       $("#homepage-goal-display").html(goalHtml);
       $("#goal-text").val("");
     };
@@ -48,6 +54,9 @@ $(document).ready(function() {
   $(document).on("click", "#goal-completion-mark", function() {
     var goalHtml = "<h2>Today's priority: " + $("#goal-text").val(); + "</h2>";
     goalHtml += "<span id='goal-completion-mark' class='glyphicon glyphicon-ok' aria-hidden='true'></span>";
+    goalHtml += "<span id='goal-completion-mark' class='glyphicon glyphicon-remove' aria-hidden='true'></span>";
+    goalHtml += "<span id='goal-completion-mark' class='glyphicon glyphicon-delete' aria-hidden='true'></span>";
+
     $("#homepage-goal-display").html(goalHtml);
   });
 
