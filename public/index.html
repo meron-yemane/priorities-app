@@ -8,14 +8,16 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous">
     </script>
+    <script type="text/javascript" src="client.js"></script>
     <script type="text/javascript" src="app.js"></script>
     <title>Priorities</title>
   </head>
   <body class="container">
+
     <div class="row" id="login">
       <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
         <h1 class="text-center text-info">Login</h1>
-        <form novalidate>
+        <form id="login-form" novalidate>
           <div class="form-group">
             <label for="email">Email address</label>
             <input type="email" class="form-control" id="email" placeholder="Email" required>
@@ -24,18 +26,18 @@
             <label for="password">Password</label>
             <input type="password" class="form-control" id="password" placeholder="Password" required>
           </div>
-          <button type="submit" id="homepage-button" class="btn btn-primary pull-right">Submit</button>
+          <button type="submit" class="btn btn-primary pull-right">Submit</button>
         </form>
         <div class="row clearfix">
-          
           <button type="button" id="sign-up-button" class="btn btn-link">Click here to sign-up!</button>
         </div>
       </div>
     </div>
+
     <div class="row" id="signup">
       <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
         <h1 class="text-center text-info">Sign-Up</h1>
-        <form>
+        <form id="signup-form">
           <div class="form-group">
             <div class="form-inline text-center">
 
@@ -55,14 +57,14 @@
           <div class="form-group">
             <input class="form-control" name="reenterpassword" placeholder="Re-enter Password" type="password"/>
           </div>
-          <button class="btn btn-lg btn-primary btn-block" type="submit">
-              Submit</button>
+          <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
         </form>
         <div class="row clearfix">
           <button type="button" id="login-button" class="btn btn-link">Already a member? Click here to login!</button>
         </div>
       </div>
     </div>
+
     <div class="row" id="homepage">
       <nav class="navbar navbar-default">
         <div class="container-fluid">
@@ -89,13 +91,14 @@
           </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
       </nav>
-      <form role="form">
+
+      <form id="set-goal" role="form">
         <div class="row">
           <div class="col-md-8">
             <div class="input-group input-group-lg">
-              <input type="text" class="form-control" id="goal-text" placeholder="Enter your most important goal for the day.">
+              <input type="text" class="form-control" id="goal-text" placeholder="Enter your most important goal for the day." required>
               <div class="input-group-btn">
-                <button class="btn btn-primary" id="goal-button" type="submit">Submit</button>
+                <button class="btn btn-primary" type="submit">Submit</button>
               </div>
             </div>
           </div>
@@ -103,6 +106,7 @@
       </form>
       <div id="homepage-goal-display" class="row"></div>
     </div>
+
     <div id="progresspage">
       <nav class="navbar navbar-default">
         <div class="container-fluid">
@@ -131,7 +135,7 @@
       </nav>
       <h3 class="text-center text-info">Here are some stats on your priority completion performance:</h3>
       <div id="progressStats"></div>
-      <script type="text/javascript" src="client.js"></script>
+
     </div>
   </body>
 </html>
