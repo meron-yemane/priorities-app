@@ -1,43 +1,43 @@
-var mock_goal_completion_history = {
-  "goal_completion_history": [
+var mock_goals = {
+  "goals": [
     {
-      "id": "11111",
+      "id": 1,
       "goal": "Complete 3 hours of Thinkful",
       "completed": true,
       "date_committed": 010217
     },
     {
-      "id": "22222",
+      "id": 2,
       "goal": "Take out trash",
       "completed": false,
       "date_committed": 010317
     },
     {
-      "id": "3333",
+      "id": 3,
       "goal": "Practice clarinet for 6 hours",
       "completed": true,
       "date_committed": 010417
     },
     {
-      "id": "444444",
+      "id": 4,
       "goal": "Complete 3 hours of Thinkful",
       "completed": true,
       "date_committed": 010517
     },
     {
-      "id": "555555",
+      "id": 5,
       "goal": "Complete 8 hours of Thinkful",
       "completed": false,
       "date_committed": 010617
     },
     {
-      "id": "666666",
+      "id": 6,
       "goal": "Walk dog",
       "completed": true,
       "date_committed": 010717
     },
     {
-      "id": "7777777",
+      "id": 7,
       "goal": "Get 10 girls numbers",
       "completed": true,
       "date_committed": 010817
@@ -46,20 +46,20 @@ var mock_goal_completion_history = {
 };
 
 function getGoalPercentages(callbackFn) {
-  setTimeout(function(){ callbackFn(mock_goal_completion_history)}, 100);
+  setTimeout(function(){ callbackFn(mock_goals)}, 100);
 }
 
 
 function displayGoalPercentages(data) {
   var completed = 0;
-  for (goal=0; goal<data.goal_completion_history.length; goal++) {
-    if (data.goal_completion_history[goal].completed) {
+  for (goal=0; goal<data.goals.length; goal++) {
+    if (data.goals[goal].completed) {
       completed++
     };
   };
   console.log(completed);
-  var percentage = completed/data.goal_completion_history.length * 100;
-  var html = "<h2> You've succedded in completing " + Math.round(percentage) + "% of your most important goals.</h2>";
+  var percentage = completed/data.goals.length * 100;
+  var html = "<h2> You've succeeded in completing " + Math.round(percentage) + "% of your most important goals.</h2>";
   $("#progressStats").html(html);
 
 }
@@ -71,10 +71,3 @@ function getAndDisplayGoalPercentages() {
 $(function() {
   getAndDisplayGoalPercentages();
 });
-
-
-
-
-
-
-
