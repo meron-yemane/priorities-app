@@ -47,9 +47,7 @@ $(document).ready(function() {
     $("#login").show();
   });
 
-  $("#set-goal").submit(function(e) {
-    console.log("in");
-    e.preventDefault();
+  $(document).on("submit", "#set-goal", function() {
     var goal = $("#goal-text").val();
     $("#goal-text").val("");
     var goalRecord = {};
@@ -65,6 +63,7 @@ $(document).ready(function() {
     goalHtml += "&nbsp;&nbsp;<span id='goal-completion-glyphicon' class='glyphicon glyphicon-ok' role='button' aria-hidden='true'></span>";
     goalHtml += "&nbsp;&nbsp;<span id='edit-goal-glyphicon' class='glyphicon glyphicon-pencil' role='button' aria-hidden='true'></span>";
     goalHtml += "</h1>";
+    $("#set-goal").html(" ");
     $("#homepage-goal-display").html(goalHtml);
   });
 
@@ -109,6 +108,19 @@ $(document).ready(function() {
   });
 
   $(document).on("click", "#delete-goal-glyphicon", function(){
+    var setGoal = "<form id='set-goal' role='form'>";
+    setGoal += "<div class='row'>";
+    setGoal += "<div class='col-md-8'>";
+    setGoal += "<div class='input-group input-group-lg'>";
+    setGoal += "<input type='text' class='form-control' id='goal-text' placeholder='Enter your most important goal for the day.' required>";
+    setGoal += "<div class='input-group-btn'>"; 
+    setGoal += "<button class='btn btn-primary' type='submit'>Submit</button>";
+    setGoal += "</div>";
+    setGoal += "</div>";
+    setGoal += "</div>";
+    setGoal += "</div>";
+    setGoal += "</form>";
+    $("#goal-submission-form").html(setGoal);
     $("#homepage-goal-display").html("<p></p>");
   });
 
