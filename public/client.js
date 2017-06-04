@@ -54,7 +54,7 @@ function displayGoalPercentages(data) {
   var completed = 0;
   for (goal=0; goal<data.goals.length; goal++) {
     if (data.goals[goal].completed) {
-      completed++
+      completed++;
     };
   };
   var percentage = completed/data.goals.length * 100;

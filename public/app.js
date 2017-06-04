@@ -70,13 +70,12 @@ $(document).ready(function() {
   $(document).on("click", "#edit-goal-glyphicon", function() {
     var goalToEdit = mock_goals.goals[mock_goals.goals.length - 1].goal;
     var editHtml = "<h2 class='text-center'>Today's priority: </h2>"; 
-    editHtml += "<div class='container'>";
+    editHtml += "<div class='row'>";
+    editHtml += "<div class='col-sm-6 col-sm-offset-3'>";
     editHtml += "<form id='edited-goal'>";
-    editHtml += "<div class='form-group col-md-6'>";
     editHtml += "<input type='text' class='form-control' id='edited-goal-text' value=" + "'" + goalToEdit + "'" + " required>";
-    editHtml += "</div>";
-    editHtml += "<button class='btn btn-primary' type='submit'>Submit</button>";
     editHtml += "</form>";
+    editHtml += "</div>";
     editHtml += "</div>";   
     $("#homepage-goal-display").html(editHtml);
   });
