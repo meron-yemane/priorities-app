@@ -57,7 +57,6 @@ function displayGoalPercentages(data) {
       completed++
     };
   };
-  console.log(completed);
   var percentage = completed/data.goals.length * 100;
   var html = "<h2> You've succeeded in completing " + Math.round(percentage) + "% of your most important goals.</h2>";
   $("#progressStats").html(html);

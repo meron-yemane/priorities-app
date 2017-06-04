@@ -48,6 +48,7 @@ $(document).ready(function() {
   });
 
   $("#set-goal").submit(function(e) {
+    console.log("in");
     e.preventDefault();
     var goal = $("#goal-text").val();
     $("#goal-text").val("");
@@ -58,28 +59,60 @@ $(document).ready(function() {
     goalRecord.date_committed = Date();
     mock_goals.goals.push(goalRecord);
     console.log(mock_goals.goals);
-    var goalHtml = "<h2 class='text-center'>Today's priority:</h2>";
-    goalHtml += "<h1 class='text-center'>" + $("#goal-text").val();
-    goalHtml += "&nbsp;&nbsp;<span id='delete-goal-button' class='glyphicon glyphicon-remove' role='button' aria-hidden='true'></span>";
-    goalHtml += "&nbsp;&nbsp;<span id='goal-completion-mark' class='glyphicon glyphicon-ok' role='button' aria-hidden='true'></span>";
-    goalHtml += "&nbsp;&nbsp;<span id='goal-completion-mark' class='glyphicon glyphicon-pencil' role='button' aria-hidden='true'></span>";
+    var goalHtml = "<h2 class='text-center'>Today's priority: " + goal + "</h2>";
+    goalHtml += "<h1 class='text-center'>" //+ $("#goal-text").val();
+    goalHtml += "&nbsp;&nbsp;<span id='delete-goal-glyphicon' class='glyphicon glyphicon-remove' role='button' aria-hidden='true'></span>";
+    goalHtml += "&nbsp;&nbsp;<span id='goal-completion-glyphicon' class='glyphicon glyphicon-ok' role='button' aria-hidden='true'></span>";
+    goalHtml += "&nbsp;&nbsp;<span id='edit-goal-glyphicon' class='glyphicon glyphicon-pencil' role='button' aria-hidden='true'></span>";
     goalHtml += "</h1>";
     $("#homepage-goal-display").html(goalHtml);
-
   });
 
-  $(document).on("click", "#goal-completion-mark", function() {
+  $(document).on("click", "#edit-goal-glyphicon", function() {
+    var goalToEdit = mock_goals.goals[mock_goals.goals.length - 1].goal;
+    var editHtml = "<h2 class='text-center'>Today's priority: </h2>"; 
+    editHtml += "<div class='container'>";
+    editHtml += "<form id='edited-goal'>";
+    editHtml += "<div class='form-group col-md-6'>";
+    editHtml += "<input type='text' class='form-control' id='edited-goal-text' value=" + "'" + goalToEdit + "'" + " required>";
+    editHtml += "</div>";
+    editHtml += "<button class='btn btn-primary' type='submit'>Submit</button>";
+    editHtml += "</form>";
+    editHtml += "</div>";   
+    $("#homepage-goal-display").html(editHtml);
+  });
+
+  $(document).on("submit", "#edited-goal", function() {
+    console.log("edit");
+    var goal = $("#edited-goal-text").val();
+    console.log("goal:" + goal)
+    mock_goals.goals[mock_goals.goals.length - 1].goal = goal;
+    console.log(mock_goals.goals);
+    var goalHtml = "<h2 class='text-center'>Today's priority: " + goal + "</h2>";
+    goalHtml += "<h1 class='text-center'>" //+ $("#goal-text").val();
+    goalHtml += "&nbsp;&nbsp;<span id='delete-goal-glyphicon' class='glyphicon glyphicon-remove' role='button' aria-hidden='true'></span>";
+    goalHtml += "&nbsp;&nbsp;<span id='goal-completion-glyphicon' class='glyphicon glyphicon-ok' role='button' aria-hidden='true'></span>";
+    goalHtml += "&nbsp;&nbsp;<span id='edit-goal-glyphicon' class='glyphicon glyphicon-pencil' role='button' aria-hidden='true'></span>";
+    goalHtml += "</h1>";
+    $("#homepage-goal-display").html(goalHtml);
+  });
+
+
+  $(document).on("click", "#goal-completion-glyphicon", function() {
     var goalHtml = "<h2>Today's priority:</h2>";
     goalHtml += "<h1>" + $("#goal-text").val();
-    goalHtml += "&nbsp;&nbsp;<span id='goal-completion-mark' class='glyphicon glyphicon-ok' aria-hidden='true'></span>";
-    goalHtml += "&nbsp;&nbsp;<span id='goal-completion-mark' class='glyphicon glyphicon-remove' aria-hidden='true'></span>";
-    goalHtml += "&nbsp;&nbsp;<span id='goal-completion-mark' class='glyphicon glyphicon-delete' aria-hidden='true'></span>";
+    goalHtml += "&nbsp;&nbsp;<span id='goal-completion-glyphicon' class='glyphicon glyphicon-ok' aria-hidden='true'></span>";
+    goalHtml += "&nbsp;&nbsp;<span id='goal-completion-glyphicon' class='glyphicon glyphicon-remove' aria-hidden='true'></span>";
+    goalHtml += "&nbsp;&nbsp;<span id='goal-completion-glyphicon' class='glyphicon glyphicon-delete' aria-hidden='true'></span>";
     goalHtml += "</h1>";
     $("#homepage-goal-display").html(goalHtml);
   });
 
-  $(document).on("click", "#delete-goal-button", function(){
+  $(document).on("click", "#delete-goal-glyphicon", function(){
     $("#homepage-goal-display").html("<p></p>");
   });
 
 });
+
+
+
