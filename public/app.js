@@ -47,7 +47,8 @@ $(document).ready(function() {
     $("#login").show();
   });
 
-  $(document).on("submit", "#set-goal", function() {
+  $(document).on("submit", "#set-goal", function(e) {
+    e.preventDefault();
     var goal = $("#goal-text").val();
     $("#goal-text").val("");
     var goalRecord = {};
@@ -73,14 +74,15 @@ $(document).ready(function() {
     editHtml += "<div class='row'>";
     editHtml += "<div class='col-sm-6 col-sm-offset-3'>";
     editHtml += "<form id='edited-goal'>";
-    editHtml += "<input type='text' class='form-control' id='edited-goal-text' value=" + "'" + goalToEdit + "'" + " required>";
+    editHtml += "<input type='text' class='form-control input-lg' id='edited-goal-text' value=" + "'" + goalToEdit + "'" + " required>";
     editHtml += "</form>";
     editHtml += "</div>";
     editHtml += "</div>";   
     $("#homepage-goal-display").html(editHtml);
   });
 
-  $(document).on("submit", "#edited-goal", function() {
+  $(document).on("submit", "#edited-goal", function(e) {
+    e.preventDefault();
     console.log("edit");
     var goal = $("#edited-goal-text").val();
     console.log("goal:" + goal)
@@ -109,7 +111,7 @@ $(document).ready(function() {
   $(document).on("click", "#delete-goal-glyphicon", function(){
     var setGoal = "<form id='set-goal' role='form'>";
     setGoal += "<div class='row'>";
-    setGoal += "<div class='col-md-8'>";
+    setGoal += "<div class='col-sm-8 col-sm-offset-2'>"
     setGoal += "<div class='input-group input-group-lg'>";
     setGoal += "<input type='text' class='form-control' id='goal-text' placeholder='Enter your most important goal for the day.' required>";
     setGoal += "<div class='input-group-btn'>"; 
