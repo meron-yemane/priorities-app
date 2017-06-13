@@ -1,9 +1,12 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const Priorities = require('../models');
+const faker = require('faker');
+const mongoose = require('mongoose');
 
 const {app, runServer, closeServer} = require('../server');
 const should = chai.should();
+const {TEST_DATABASE_URL} = require('../config');
 
 chai.use(chaiHttp);
 
@@ -19,33 +22,63 @@ chai.use(chaiHttp);
   //});
 //});
 
-describe('Priorities', function() {
+function seedPriorityData() {
+  console.info('seeding priority data');
+  const seedData = [];
+
+  for (let i=1; i<=10; i++) {
+    seedData.push(generatePriorityData());
+  }
+  // this will return a promise
+  return Priorities.insertMany(seedData);
+}
+
+function generatePriorityData() {
+  return {
+    date_committed: faker.date.past(),
+    completed: [true, false][Math.round(Math.random())],
+    goal: faker.lorem.sentence(6)
+  }
+}
+
+
+
+function tearDownDb() {
+  console.warn('Deleting database');
+  return mongoose.connection.dropDatabase();
+}
+
+describe('Priority API resources', function() {
   before(function() {
-    Priorities
-    .create({
-      goal: "Practice web dev for 5 hours",
-      completed: true
-    })
-    return runServer();
+    return runServer(TEST_DATABASE_URL);
+  });
+  beforeEach(function() {
+    return seedPriorityData();
+  });
+  afterEach(function() {
+    return tearDownDb();
   });
   after(function() {
     return closeServer();
-  });
+  })
 
-  it('should list priorities on GET', function() {
-    return chai.request(app);
-      .get('/priorities')
-      .then(function(res) {
-        res.should.have.status(200);
-        res.should.be.json;
-        res.body.should.be.a('array');
-        res.body.length.should.be.above(0);
-        const expectedKeys = ['id', 'completed', 'goal', 'date_committed'];
-        res.body.forEach(function(item) {
-          item.should.be.a('object');
-          item.should.include.keys(expectedKeys);
+  describe('GET endpoint', function() {
+
+    it('should list priorities on GET', function() {
+      return chai.request(app)
+        .get('/priorities')
+        .then(function(res) {
+          res.should.have.status(200);
+          res.should.be.json;
+          res.body.should.be.a('array');
+          res.body.length.should.be.above(0);
+          const expectedKeys = ['completed', 'goal', 'date_committed'];
+          res.body.forEach(function(item) {
+            item.should.be.a('object');
+            item.should.include.keys(expectedKeys);
+          });
         });
-      });
+    });
   });
 
 

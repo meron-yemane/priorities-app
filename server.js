@@ -23,7 +23,7 @@ function runServer(databaseUrl=DATABASE_URL, port=PORT) {
         return reject(err);
       }
       server = app.listen(port, () => {
-        console.log('Your app is listening on port ${port}');
+        console.log(`Your app is listening on port ${port}`);
         resolve();
       }).on('error', err => {
         mongoose.disconnect();
@@ -37,7 +37,7 @@ function closeServer() {
   return mongoose.disconnect().then(() => {
     return new Promise((resolve, reject) => {
       console.log('Closing server');
-      sever.close(err => {
+      server.close(err => {
         if (err) {
           reject(err);
           return;
@@ -70,7 +70,6 @@ app.get('/priorities', (req, res) => {
 
 app.use(express.static('public'));
 
-app.listen(process.env.PORT || 8080, () => console.log("listening"));
 
 if (require.main === module) {
   runServer().catch(err => console.error(err));
