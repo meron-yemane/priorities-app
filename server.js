@@ -48,7 +48,7 @@ function closeServer() {
   });
 }
 
-app.get('/priorities', (req, res) => { 
+app.get('/priorities/all', (req, res) => { 
   Priorities
     .find()
     .exec()
@@ -62,7 +62,30 @@ app.get('/priorities', (req, res) => {
       });
 });
 
+app.post('/priorities/create', (req, res) => {
+  const requiredFields = ['goal', 'completed', 'date_committed'];
+  for (var i=0; i<requiredFields.length; i++) {
+    var field = requiredFields[i];
+    if (!(field in req.body)) {
+      const message = `Missing ${field} in request body`
+      console.error(message);
+      return res.status(400).send(message);
+    }
+  }
 
+  Priorities
+    .create({
+      goal: req.body.goal,
+      completed: req.body.completed,
+      date_committed: req.body.date_committed
+    })
+    .then(
+      priority => res.status(201).json(priority))
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({message: 'Internal server error'});
+    });
+});
 
 
 

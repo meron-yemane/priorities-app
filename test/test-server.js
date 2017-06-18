@@ -64,9 +64,9 @@ describe('Priority API resources', function() {
 
   describe('GET endpoint', function() {
 
-    it('should list priorities on GET', function() {
+    it('should list all priorities', function() {
       return chai.request(app)
-        .get('/priorities')
+        .get('/priorities/all')
         .then(function(res) {
           res.should.have.status(200);
           res.should.be.json;
@@ -81,9 +81,29 @@ describe('Priority API resources', function() {
     });
   });
 
+  describe('POST endpoint', function() {
 
+    it('should add a priority', function() {
+      const newPriority = generatePriorityData();
 
+      return chai.request(app)
+        .post('/priorities/create')
+        .send(newPriority)
+        .then(function(res) {
+          res.should.have.status(201);
+          res.should.be.json;
+          res.body.should.be.a('object');
+          res.body.should.include.keys(
+            '_id', 'completed', 'goal', 'date_committed');
+          res.body.goal.should.equal(newPriority.goal);
+          res.body.completed.should.equal(newPriority.completed);
+          //res.body.date_committed.should.equal(newPriority.date_committed);
+          res.body._id.should.not.be.null;
 
+        });
+
+    });
+  });
 });
 
 

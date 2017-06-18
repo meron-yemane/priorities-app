@@ -56,6 +56,7 @@ $(document).ready(function() {
     goalRecord.goal = goal;
     goalRecord.completed = false;
     goalRecord.date_committed = Date();
+    // POST 
     mock_goals.goals.push(goalRecord);
     console.log(mock_goals.goals);
     var goalHtml = "<h2 class='text-center'>Today's priority: " + goal + "</h2>";
@@ -86,6 +87,7 @@ $(document).ready(function() {
     console.log("edit");
     var goal = $("#edited-goal-text").val();
     console.log("goal:" + goal)
+    // PUT request below 
     mock_goals.goals[mock_goals.goals.length - 1].goal = goal;
     console.log(mock_goals.goals);
     var goalHtml = "<h2 class='text-center'>Today's priority: " + goal + "</h2>";
