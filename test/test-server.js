@@ -104,6 +104,27 @@ describe('Priority API resources', function() {
 
     });
   });
+
+  describe('DELETE endpoint', function() {
+
+    it('should delete todays priority', function() {
+      let priority;
+      return Priorities
+        .findOne()
+        .exec()
+        .then(function(_priority) {
+          priority = _priority;
+          return chai.request(app).delete(`/priorities/${priority._id}`);
+        })
+        .then(function(res) {
+          res.should.have.status(204);
+          return Priorities.findById(priority._id).exec();
+        })
+        .then(function(_priority) {
+          should.not.exist(_priority);
+        });
+    });
+  });
 });
 
 

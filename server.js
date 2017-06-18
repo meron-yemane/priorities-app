@@ -87,6 +87,14 @@ app.post('/priorities/create', (req, res) => {
     });
 });
 
+app.delete('/priorities/:id', (req, res) => {
+  Priorities
+    .findByIdAndRemove(req.params.id)
+    .exec()
+    .then(priority => res.status(204).end())
+    .catch(err => res.status(500).json({message: 'Internal server error'}));
+});
+
 
 
 
