@@ -125,6 +125,32 @@ describe('Priority API resources', function() {
         });
     });
   });
+
+  describe('PUT endpoint', function() {
+
+    it('should update goal field you send over', function() {
+      const updateData = {
+        goal: 'Get 10 numbers',
+      };
+
+      return Priorities 
+      .findOne()
+      .exec()
+      .then(function(priority) {
+        updateData.id = priority.id;
+        return chai.request(app)
+          .put(`/priorities/${priority.id}`)
+          .send(updateData);
+      })
+      .then(function(res) {
+        res.should.have.status(204);
+        return Priorities.findById(updateData.id).exec();
+      })
+      .then(function(priority) {
+        priority.goal.should.equal(updateData.goal);
+      });
+    });
+  });
 });
 
 

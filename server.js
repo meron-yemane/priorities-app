@@ -95,9 +95,24 @@ app.delete('/priorities/:id', (req, res) => {
     .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 
+app.put('/priorities/:id', (req, res) => {
+  if(!(req.params._id === req.body._id)) {
+    const message = ('Request path id must match request body id');
+    console.error(message);
+    res.status(400).json({message: 'Request path id must match request body id'});
+  };
 
-
-
+  const toUpdate = {};
+  const updateableFields = ['goal', 'completed', 'date_committed'];
+  updateableFields.forEach(field => {
+    toUpdate[field] = req.body[field];
+  });
+  Priorities 
+    .findByIdAndUpdate(req.params.id, {$set: toUpdate})
+    .exec()
+    .then(post => res.status(204).json(post))
+    .catch(err => res.status(500).json({message: 'Internal server error'}));
+});
 
 app.use(express.static('public'));
 
