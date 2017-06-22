@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
@@ -21,6 +22,14 @@ const UserSchema = mongoose.Schema({
   firstName: {type: String, default: ""},
   lastName: {type: String, default: ""}
 });
+
+UserSchema.methods.apiRepr = function() {
+  return {
+    username: this.username || '',
+    firstName: this.firstName || '',
+    lastName: this.lastName || ''
+  };
+}
 
 UserSchema.methods.validatePassword = function(password) {
   return bcrypt.compare(password, this.password);

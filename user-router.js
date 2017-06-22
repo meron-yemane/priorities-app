@@ -70,8 +70,7 @@ userRouter.post('/', (req, res) => {
   if (password === '') {
     return res.status(422).json({message: 'Incorrect field length: password'});
   }
-
-  // check for existing user
+    // check for existing user
   return Users
     .find({username})
     .count()
@@ -81,9 +80,11 @@ userRouter.post('/', (req, res) => {
         return res.status(422).json({message: 'username already taken'});
       }
       // if no existing user, hash password
+      //console.log(password)
       return Users.hashPassword(password)
     })
     .then(hash => {
+      console.log(password)
       return Users
         .create({
           username: username,
@@ -99,20 +100,6 @@ userRouter.post('/', (req, res) => {
       res.status(500).json({message: 'Internal server error'})
     });
 });
-
-// never expose all your users like below in a prod application
-// we're just doing this so we have a quick way to see
-// if we're creating users. keep in mind, you can also
-// verify this in the Mongo shell.
-userRouter.get('/', (req, res) => {
-  return Users
-    .find()
-    .exec()
-    .then(users => res.json(users.map(user => user.apiRepr())))
-    .catch(err => console.log(err) && res.status(500).json({message: 'Internal server error'}));
-});
-
-
 
 
 userRouter.get('/me',
