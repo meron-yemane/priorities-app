@@ -1,6 +1,6 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const Priorities = require('../models');
+const {Priorities, Users} = require('../models');
 const faker = require('faker');
 const mongoose = require('mongoose');
 
@@ -9,18 +9,6 @@ const should = chai.should();
 const {TEST_DATABASE_URL} = require('../config');
 
 chai.use(chaiHttp);
-
-//describe('index.html page', function() {
-  //it('exists', function(done) {
-  //  chai.request(app)
-  //    .get('/')
-  //    .end(function(err, res) {
-  //      res.should.have.status(200);
-        //res.should.be.html;
-  //      done();
-  //    });
-  //});
-//});
 
 function seedPriorityData() {
   console.info('seeding priority data');
@@ -37,11 +25,10 @@ function generatePriorityData() {
   return {
     date_committed: faker.date.past(),
     completed: [true, false][Math.round(Math.random())],
-    goal: faker.lorem.sentence(6)
+    goal: faker.lorem.sentence(6),
+    username: faker.internet.userName()
   }
 }
-
-
 
 function tearDownDb() {
   console.warn('Deleting database');
@@ -97,7 +84,6 @@ describe('Priority API resources', function() {
             '_id', 'completed', 'goal', 'date_committed');
           res.body.goal.should.equal(newPriority.goal);
           res.body.completed.should.equal(newPriority.completed);
-          //res.body.date_committed.should.equal(newPriority.date_committed);
           res.body._id.should.not.be.null;
 
         });
@@ -138,6 +124,7 @@ describe('Priority API resources', function() {
       .exec()
       .then(function(priority) {
         updateData.id = priority.id;
+        console.log("id:" + updateData.id);
         return chai.request(app)
           .put(`/priorities/${priority.id}`)
           .send(updateData);

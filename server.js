@@ -9,10 +9,13 @@ mongoose.Promise = global.Promise;
 const app = express();
 
 const {PORT, DATABASE_URL} = require('./config');
-const Priorities = require('./models');
+const {userRouter} = require('./user-router');
+const {prioritiesRouter} = require('./priorities-router');
 
 app.use(bodyParser.json());
 app.use(morgan('common'));
+app.use('/users/', userRouter);
+app.use('/priorities/', prioritiesRouter);
 
 let server;
 
@@ -47,72 +50,6 @@ function closeServer() {
     });
   });
 }
-
-app.get('/priorities/all', (req, res) => { 
-  Priorities
-    .find()
-    .exec()
-    .then(priorities => {
-      res.json(priorities.map((priorities) => priorities));
-    })
-    .catch(
-      err => {
-        console.error(err);
-        res.status(500).json({message: 'Internal server error'});
-      });
-});
-
-app.post('/priorities/create', (req, res) => {
-  const requiredFields = ['goal', 'completed', 'date_committed'];
-  for (var i=0; i<requiredFields.length; i++) {
-    var field = requiredFields[i];
-    if (!(field in req.body)) {
-      const message = `Missing ${field} in request body`
-      console.error(message);
-      return res.status(400).send(message);
-    }
-  }
-
-  Priorities
-    .create({
-      goal: req.body.goal,
-      completed: req.body.completed,
-      date_committed: req.body.date_committed
-    })
-    .then(
-      priority => res.status(201).json(priority))
-    .catch(err => {
-      console.error(err);
-      res.status(500).json({message: 'Internal server error'});
-    });
-});
-
-app.delete('/priorities/:id', (req, res) => {
-  Priorities
-    .findByIdAndRemove(req.params.id)
-    .exec()
-    .then(priority => res.status(204).end())
-    .catch(err => res.status(500).json({message: 'Internal server error'}));
-});
-
-app.put('/priorities/:id', (req, res) => {
-  if(!(req.params._id === req.body._id)) {
-    const message = ('Request path id must match request body id');
-    console.error(message);
-    res.status(400).json({message: 'Request path id must match request body id'});
-  };
-
-  const toUpdate = {};
-  const updateableFields = ['goal', 'completed', 'date_committed'];
-  updateableFields.forEach(field => {
-    toUpdate[field] = req.body[field];
-  });
-  Priorities 
-    .findByIdAndUpdate(req.params.id, {$set: toUpdate})
-    .exec()
-    .then(post => res.status(204).json(post))
-    .catch(err => res.status(500).json({message: 'Internal server error'}));
-});
 
 app.use(express.static('public'));
 
