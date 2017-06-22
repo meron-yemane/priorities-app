@@ -30,6 +30,15 @@ function generatePriorityData() {
   }
 }
 
+function generateUserData() {
+  return {
+    username: faker.internet.userName(),
+    password: faker.lorem.words(5),
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName()
+  }
+}
+
 function tearDownDb() {
   console.warn('Deleting database');
   return mongoose.connection.dropDatabase();
@@ -69,6 +78,24 @@ describe('Priority API resources', function() {
   });
 
   describe('POST endpoint', function() {
+
+    it('should add a user', function() {
+      const newUser = generateUserData();
+
+      return chai.request(app)
+        .post('/users')
+        .send(newUser)
+        .then(function(res) {
+          res.should.have.status(201);
+          res.should.be.json;
+          res.should.be.a('object');
+          res.body.should.include.keys(
+            'username', 'firstName', 'lastName');
+          res.body.username.should.equal(newUser.username);
+          res.body.firstName.should.equal(newUser.firstName);
+          res.body.lastName.should.equal(newUser.lastName);
+        });
+    });
 
     it('should add a priority', function() {
       const newPriority = generatePriorityData();
