@@ -49,6 +49,8 @@ describe('Priority API resources', function() {
     return runServer(TEST_DATABASE_URL);
   });
   beforeEach(function() {
+    const newUser = generateUserData();
+    chai.request(app).post('users').send(newUser);
     return seedPriorityData();
   });
   afterEach(function() {

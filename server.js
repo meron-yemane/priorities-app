@@ -1,9 +1,17 @@
 'use strict'; 
+var sessionOpts = {
+  saveUninitialized: false, 
+  resave: false // do not automatically write to the session store
+}
+
+const {Users} = require('./models');
 
 const express = require('express');
+const session = require('express-session');//creates a session middleware
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const passport = require('passport');
 mongoose.Promise = global.Promise; 
 
 const app = express();
@@ -12,10 +20,30 @@ const {PORT, DATABASE_URL} = require('./config');
 const {userRouter} = require('./user-router');
 const {prioritiesRouter} = require('./priorities-router');
 
+app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(morgan('common'));
 app.use('/users/', userRouter);
 app.use('/priorities/', prioritiesRouter);
+app.use(session({ secret: 'best ever' }));
+app.use(session(sessionOpts));
+
+app.use(passport.initialize());//required to initialize passport
+app.use(passport.session());//required for persistent login sessions
+
+
+// serializeUser ensures that only user's id is saved in the session, and user's
+// id is later used to retrieve the whole object via deserializeUser function.
+passport.serializeUser(function(user, done) {
+  done(null, user.id);                       
+});
+
+passport.deserializeUser(function(id, done) {
+  Users
+  .findById(id, function(err, user) {
+    done(err, user);
+  });
+});
 
 let server;
 
@@ -50,8 +78,6 @@ function closeServer() {
     });
   });
 }
-
-app.use(express.static('public'));
 
 
 if (require.main === module) {

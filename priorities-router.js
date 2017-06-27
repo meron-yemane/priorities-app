@@ -1,6 +1,7 @@
 const express = require('express');
 const jsonParser = require('body-parser').json();
 const {Priorities} = require('./models');
+const {Users} = require('./models');
 
 const prioritiesRouter = express.Router();
 
@@ -37,9 +38,25 @@ prioritiesRouter.post('/create', (req, res) => {
       completed: req.body.completed
     })
     .then(
+      priority => {
+        Users
+          .findOne(req.user) 
+          .exec(function (err, user){
+            if (err) {
+              console.log(err)
+            } else {
+              console.log("USER RECORD");
+              console.log(user);
+              console.log("Priorities");
+              console.log(priority);
+              user._priorities.push(priority);
+              user.save 
+            }
+        })
+      })
+    .then(
       priority => res.status(201).json(priority))
     .catch(err => {
-      console.log("INIT");
       console.log(err);
       res.status(500).json({message: 'Internal server error'});
     });

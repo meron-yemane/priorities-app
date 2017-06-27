@@ -6,7 +6,7 @@ const PrioritySchema = new Schema({
   goal: {type: String, required: true}, 
   completed: {type: Boolean, required: true},
   date_committed: {type: Date, default: Date.now}, //look at how to include date
-  username: {type: String, required: true}
+  //_creator : { type: Schema.ObjectId, ref: 'Users'}
 });
 
 const UserSchema = mongoose.Schema({
@@ -20,7 +20,8 @@ const UserSchema = mongoose.Schema({
     required: true
   },
   firstName: {type: String, default: ""},
-  lastName: {type: String, default: ""}
+  lastName: {type: String, default: ""},
+  _priorities : [{type: Schema.ObjectId, ref: 'Priorities'}]
 });
 
 UserSchema.methods.apiRepr = function() {
