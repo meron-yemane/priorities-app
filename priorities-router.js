@@ -45,10 +45,6 @@ prioritiesRouter.post('/create', (req, res) => {
             if (err) {
               console.log(err)
             } else {
-              console.log("USER RECORD");
-              console.log(user);
-              console.log("Priorities");
-              console.log(priority);
               user._priorities.push(priority);
               user.save 
             }

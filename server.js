@@ -1,7 +1,8 @@
 'use strict'; 
 var sessionOpts = {
   saveUninitialized: false, 
-  resave: false // do not automatically write to the session store
+  resave: false, // do not automatically write to the session store
+  cookie: {httpOnly: true}
 }
 
 const {Users} = require('./models');
@@ -12,6 +13,8 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
+const cookieParser = require('cookie-parser');
+const flash = require('connect-flash');
 mongoose.Promise = global.Promise; 
 
 const app = express();
@@ -22,15 +25,19 @@ const {prioritiesRouter} = require('./priorities-router');
 
 app.use(express.static('public'));
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(morgan('common'));
-app.use('/users/', userRouter);
-app.use('/priorities/', prioritiesRouter);
 app.use(session({ secret: 'best ever' }));
 app.use(session(sessionOpts));
+app.use(flash());
+
+//response.setHeader('Set-Cookie', ['type=ninja', 'language=javascript']);
 
 app.use(passport.initialize());//required to initialize passport
 app.use(passport.session());//required for persistent login sessions
 
+app.use('/users/', userRouter);
+app.use('/priorities/', prioritiesRouter);
 
 // serializeUser ensures that only user's id is saved in the session, and user's
 // id is later used to retrieve the whole object via deserializeUser function.

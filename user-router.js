@@ -11,7 +11,10 @@ userRouter.use(jsonParser);
 
 
 // NB: at time of writing, passport uses callbacks, not promises
-const basicStrategy = new BasicStrategy((username, password, callback) => {
+const basicStrategy = new BasicStrategy({
+  passReqToCallback: true
+  },
+  function(username, password, callback){
   let user;
   Users
     .findOne({username: username})
@@ -79,12 +82,9 @@ userRouter.post('/', (req, res) => {
       if (count > 0) {
         return res.status(422).json({message: 'username already taken'});
       }
-      // if no existing user, hash password
-      //console.log(password)
       return Users.hashPassword(password)
     })
     .then(hash => {
-      console.log(password)
       return Users
         .create({
           username: username,
@@ -101,9 +101,25 @@ userRouter.post('/', (req, res) => {
     });
 });
 
+userRouter.post('/login', passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: '/login',
+    failureFlash: true,
+    session: true 
+  }),
+  (req, res) => {
+    Users.findOne({username: req.body.username}, (err, user) => {
+      if (err) {
+        console.log(err)
+      } else {
+        console.log("USER LOG = " + user.username)
+        res.json({user: req.user.apiRepr()})
+      }
+    })
+});
 
 userRouter.get('/me',
-  passport.authenticate('basic', {session: false}),
+  passport.authenticate('basic', {session: true}),
   (req, res) => res.json({user: req.user.apiRepr()})
 );
 

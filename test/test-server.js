@@ -8,6 +8,8 @@ const {app, runServer, closeServer} = require('../server');
 const should = chai.should();
 const {TEST_DATABASE_URL} = require('../config');
 
+
+
 chai.use(chaiHttp);
 
 function seedPriorityData() {
@@ -26,17 +28,38 @@ function generatePriorityData() {
     date_committed: faker.date.past(),
     completed: [true, false][Math.round(Math.random())],
     goal: faker.lorem.sentence(6),
-    username: faker.internet.userName()
+    //username: faker.internet.userName()
   }
 }
 
 function generateUserData() {
-  return {
-    username: faker.internet.userName(),
-    password: faker.lorem.words(5),
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName()
-  }
+  //return {
+    //username: "meron93",
+    //firstName: "Meron",
+    //lastName: "Yemane",
+    //password: "password"
+  //}
+
+  chai.request(app)
+  .post('/users')
+  .send({
+    username: "meron93",
+    firstName: "Meron",
+    lastName: "Yemane",
+    password: "password"
+  });
+
+
+  //return Users.hashPassword("password")
+    //.then(function(hash) {
+      //return {
+        //username: "meron93",
+        //password: hash
+      //};
+    //})
+    //.then(function(user) {
+      //return Users.create(user)
+    //})
 }
 
 function tearDownDb() {
@@ -44,14 +67,39 @@ function tearDownDb() {
   return mongoose.connection.dropDatabase();
 }
 
+var Cookies;
+
 describe('Priority API resources', function() {
   before(function() {
     return runServer(TEST_DATABASE_URL);
   });
   beforeEach(function() {
-    const newUser = generateUserData();
-    chai.request(app).post('users').send(newUser);
-    return seedPriorityData();
+    return seedPriorityData()
+    .then(function() {
+      generateUserData()
+    })
+    .then(function() {
+      chai.request(app)
+        .post('/users/login')
+        .set('Content-Type', 'application/json')
+        .set('Cookie', 'name=cookie-monster')
+        .send({ username: 'meron93', password: 'password' })
+        .end(function(err, res) {
+          Cookies = 'cookie-monster'
+          console.log("USERNAME = " + res.body.username)
+        })
+    });
+      //.then(function() {
+        //chai.request(app)
+        //  .post('/users')
+
+      //})
+
+
+
+    //const newUser = generateUserData();
+    //chai.request(app).post('/users').send(newUser);
+    //return seedPriorityData();
   });
   afterEach(function() {
     return tearDownDb();
@@ -82,7 +130,12 @@ describe('Priority API resources', function() {
   describe('POST endpoint', function() {
 
     it('should add a user', function() {
-      const newUser = generateUserData();
+      const newUser = {
+        username: "Steve",
+        firstName: "Steve",
+        lastName: "Karl",
+        password: "password"
+      }
 
       return chai.request(app)
         .post('/users')
@@ -99,13 +152,30 @@ describe('Priority API resources', function() {
         });
     });
 
+    it('should login existing user', function() {
+
+      return chai.request(app)
+        .post('/users/login')
+        .set('contentType', 'application/json')
+        .send({
+          username: "meron93",
+          password: "password"
+        })
+        .then(function(res) {
+          res.should.be.json;
+          res.should.be.a('object');
+        });
+    });
+
     it('should add a priority', function() {
-      const newPriority = generatePriorityData();
+      priorityData = generatePriorityData();
 
       return chai.request(app)
         .post('/priorities/create')
-        .send(newPriority)
+        req.cookies = Cookies;
+        req.send(priorityData)
         .then(function(res) {
+
           res.should.have.status(201);
           res.should.be.json;
           res.body.should.be.a('object');
@@ -153,7 +223,6 @@ describe('Priority API resources', function() {
       .exec()
       .then(function(priority) {
         updateData.id = priority.id;
-        console.log("id:" + updateData.id);
         return chai.request(app)
           .put(`/priorities/${priority.id}`)
           .send(updateData);
@@ -168,17 +237,3 @@ describe('Priority API resources', function() {
     });
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
