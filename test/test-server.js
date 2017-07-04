@@ -13,7 +13,7 @@ const {TEST_DATABASE_URL} = require('../config');
 chai.use(chaiHttp);
 
 function seedPriorityData() {
-  console.info('seeding priority data');
+  generateUserData();
   const seedData = [];
 
   for (let i=1; i<=10; i++) {
@@ -49,7 +49,6 @@ function generateUserData() {
     password: "password"
   });
 
-
   //return Users.hashPassword("password")
     //.then(function(hash) {
       //return {
@@ -73,20 +72,18 @@ describe('Priority API resources', function() {
   before(function() {
     return runServer(TEST_DATABASE_URL);
   });
-  beforeEach(function() {
-    return seedPriorityData()
-    .then(function() {
-      generateUserData()
-    })
+  beforeEach(function(done) {
+    seedPriorityData()
     .then(function() {
       chai.request(app)
         .post('/users/login')
         .set('Content-Type', 'application/json')
         .set('Cookie', 'name=cookie-monster')
-        .send({ username: 'meron93', password: 'password' })
+        .send({username: 'meron93', password: 'password'})
         .end(function(err, res) {
           Cookies = 'cookie-monster'
-          console.log("USERNAME = " + res.body.username)
+          console.log("USERNAME = " + res)
+          done();
         })
     });
       //.then(function() {
@@ -162,8 +159,7 @@ describe('Priority API resources', function() {
           password: "password"
         })
         .then(function(res) {
-          res.should.be.json;
-          res.should.be.a('object');
+          res.should.have.status(200);
         });
     });
 
