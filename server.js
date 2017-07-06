@@ -1,35 +1,55 @@
 'use strict'; 
-var sessionOpts = {
-  saveUninitialized: false, 
-  resave: false, // do not automatically write to the session store
-  cookie: {httpOnly: true}
-}
-
 const {Users} = require('./models');
 
 const express = require('express');
 const session = require('express-session');//creates a session middleware
+const MongoDBStore = require('connect-mongodb-session')(session);
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
-mongoose.Promise = global.Promise; 
+const assert = require('assert');
+//mongoose.Promise = global.Promise; 
 
 const app = express();
+app.use(morgan('common'));
+app.use(bodyParser.json());
+app.use(cookieParser());
 
 const {PORT, DATABASE_URL} = require('./config');
 const {userRouter} = require('./user-router');
 const {prioritiesRouter} = require('./priorities-router');
 
-app.use(express.static('public'));
-app.use(bodyParser.json());
-app.use(cookieParser());
-app.use(morgan('common'));
-app.use(session({ secret: 'best ever' }));
-app.use(session(sessionOpts));
+const store = new MongoDBStore({
+    uri: DATABASE_URL,
+    collection: 'priorities-app'
+});
+
+store.on('error', function(error) {
+      assert.ifError(error);
+      assert.ok(false);
+});
+
+app.use(require('express-session')({
+    secret: 'best ever',
+    name: 'cookie-name',
+    store: store, // connect-mongo session store
+    proxy: true,
+    resave: true,
+    saveUninitialized: true
+}));
+
+//app.use(express.static('public'));
+//app.use(bodyParser.json());
+//app.use(cookieParser());
+//app.use(morgan('common'));
+//app.use(session({ secret: 'best ever' }));
+//app.use(session(sessionOpts));
 app.use(flash());
+
+
 
 //response.setHeader('Set-Cookie', ['type=ninja', 'language=javascript']);
 
@@ -38,19 +58,8 @@ app.use(passport.session());//required for persistent login sessions
 
 app.use('/users/', userRouter);
 app.use('/priorities/', prioritiesRouter);
-
-// serializeUser ensures that only user's id is saved in the session, and user's
-// id is later used to retrieve the whole object via deserializeUser function.
-passport.serializeUser(function(user, done) {
-  done(null, user.id);                       
-});
-
-passport.deserializeUser(function(id, done) {
-  Users
-  .findById(id, function(err, user) {
-    done(err, user);
-  });
-});
+app.use(express.static('public'));
+mongoose.Promise = global.Promise; 
 
 let server;
 

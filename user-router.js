@@ -1,12 +1,17 @@
 const {BasicStrategy} = require('passport-http');
 const LocalStrategy   = require('passport-local').Strategy;
 const express = require('express');
+const morgan = require('morgan');
 const jsonParser = require('body-parser').json();
 const passport = require('passport');
+const mongoose = require('mongoose');
 
 const {Users} = require('./models');
 
 const userRouter = express.Router();
+
+var session = require('express-session');//creates a session middleware
+var MongoDBStore = require('connect-mongodb-session')(session);
 
 userRouter.use(jsonParser);
 
@@ -62,6 +67,20 @@ const localStrategy = new LocalStrategy({
 
 passport.use(localStrategy);
 passport.use(basicStrategy);
+
+// serializeUser ensures that only user's id is saved in the session, and user's
+// id is later used to retrieve the whole object via deserializeUser function.
+passport.serializeUser(function(user, done) {
+  done(null, user.id);                       
+});
+
+passport.deserializeUser(function(id, done) {
+  Users
+  .findById(id, function(err, user) {
+    done(err, user);
+  });
+});
+
 userRouter.use(passport.initialize());
 
 userRouter.post('/', (req, res) => {
@@ -130,7 +149,7 @@ userRouter.post('/login', passport.authenticate('local', {
         failureRedirect : '/login', 
         failureFlash : true 
     }), function(req, res) {
-    res.status(200).send({})
+    return res.status(200).send({})
   });
 
 //userRouter.post('/login', (req, res) => {

@@ -7,6 +7,15 @@ const prioritiesRouter = express.Router();
 
 prioritiesRouter.use(jsonParser);
 
+
+// Check if user is authenticated
+function isAuthenticated(req, res, next) {
+    if (req.user) {
+        return next();
+    }
+    return res.status(401).send({});
+}
+
 prioritiesRouter.get('/all', (req, res) => { 
   Priorities
     .find()
@@ -21,7 +30,8 @@ prioritiesRouter.get('/all', (req, res) => {
       });
 });
 
-prioritiesRouter.post('/create', (req, res) => {
+prioritiesRouter.post('/create', isAuthenticated, (req, res) => {
+  console.log("req.user: " + req.user)
   const requiredFields = ['goal', 'completed'];
   for (var i=0; i<requiredFields.length; i++) {
     var field = requiredFields[i];
@@ -32,31 +42,55 @@ prioritiesRouter.post('/create', (req, res) => {
     }
   }
 
-  Priorities
-    .create({
-      goal: req.body.goal,
-      completed: req.body.completed
-    })
-    .then(
-      priority => {
-        Users
-          .findOne(req.user) 
-          .exec(function (err, user){
+  Priorities.create({goal: req.body.goal, completed: req.body.completed}, (err, priority) => {
+    console.log("priority: " + priority)
+    if (err) {
+      return res.status(400);
+    }
+    console.log("USERID: " + req)
+    Users
+      .findById(req.user.id) 
+      .exec(function (err, user){
+        console.log("USER: " + user);
+        if (err) {
+          return res.status(400);
+        } 
+        user._priorities.push(priority);
+        user.save(err => {
+          if (err) {
+            return res.status(400);
+          }
+          user.populate('Priorities', (err) => {
             if (err) {
-              console.log(err)
-            } else {
-              user._priorities.push(priority);
-              user.save 
+              return res.status(400);
             }
-        })
+          })
+          res.status(201).json(priority);
+        }) 
       })
-    .then(
-      priority => res.status(201).json(priority))
-    .catch(err => {
-      console.log(err);
-      res.status(500).json({message: 'Internal server error'});
-    });
+  });
 });
+//     .then(
+//       priority => {
+//         Users
+//           console.log("req.user:" + req.user)
+//           .findById(req.params.id) 
+//           .exec(function (err, user){
+//             if (err) {
+//               console.log(err)
+//             } else {
+//               user._priorities.push(priority);
+//               user.save 
+//             }
+//         })
+//       })
+//     .then(
+//       priority => res.status(201).json(priority))
+//     .catch(err => {
+//       console.log(err);
+//       res.status(500).json({message: 'Internal server error'});
+//     });
+// });
 
 prioritiesRouter.delete('/:id', (req, res) => {
   Priorities

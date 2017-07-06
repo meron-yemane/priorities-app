@@ -32,8 +32,7 @@ function generatePriorityData() {
   return {
     date_committed: faker.date.past(),
     completed: [true, false][Math.round(Math.random())],
-    goal: faker.lorem.sentence(6),
-    //username: faker.internet.userName()
+    goal: faker.lorem.sentence(6)
   }
 }
 
@@ -42,34 +41,6 @@ function generateUserData() {
         .then(function(hash) {
             return { username: "meron93", password: hash };
         })
-
-
-  //return {
-    //username: "meron93",
-    //firstName: "Meron",
-    //lastName: "Yemane",
-    //password: "password"
-  //}
-
-  // chai.request(app)
-  // .post('/users')
-  // .send({
-  //   username: "meron93",
-  //   firstName: "Meron",
-  //   lastName: "Yemane",
-  //   password: "password"
-  // });
-
-  //return Users.hashPassword("password")
-    //.then(function(hash) {
-      //return {
-        //username: "meron93",
-        //password: hash
-      //};
-    //})
-    //.then(function(user) {
-      //return Users.create(user)
-    //})
 }
 
 function tearDownDb() {
@@ -92,21 +63,10 @@ describe('Priority API resources', function() {
         .set('Cookie', 'name=cookie-monster')
         .send({username: 'meron93', password: 'password'})
         .end(function(err, res) {
-          Cookies = 'cookie-monster'
+          Cookies = res.headers['set-cookie'].pop().split(';')[0];
           done();
         })
     });
-      //.then(function() {
-        //chai.request(app)
-        //  .post('/users')
-
-      //})
-
-
-
-    //const newUser = generateUserData();
-    //chai.request(app).post('/users').send(newUser);
-    //return seedPriorityData();
   });
   afterEach(function() {
     return tearDownDb();
@@ -175,11 +135,10 @@ describe('Priority API resources', function() {
 
     it('should add a priority', function() {
       priorityData = generatePriorityData();
-
       return chai.request(app)
         .post('/priorities/create')
-        req.cookies = Cookies;
-        req.send(priorityData)
+        req.cookies = Cookies
+        .send(priorityData)
         .then(function(res) {
 
           res.should.have.status(201);

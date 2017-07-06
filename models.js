@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 
 const PrioritySchema = new Schema({ 
   goal: {type: String, required: true}, 
-  completed: {type: Boolean, required: true},
+  completed: {type: String, required: true},
   date_committed: {type: Date, default: Date.now}, //look at how to include date
   //_creator : { type: Schema.ObjectId, ref: 'Users'}
 });
