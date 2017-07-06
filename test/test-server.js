@@ -13,14 +13,19 @@ const {TEST_DATABASE_URL} = require('../config');
 chai.use(chaiHttp);
 
 function seedPriorityData() {
-  generateUserData();
-  const seedData = [];
+  return generateUserData()
+  .then(function(userData) {
+    Users.create(userData);
+  })
+  .then(function() {
+    const seedData = [];
 
-  for (let i=1; i<=10; i++) {
-    seedData.push(generatePriorityData());
-  }
-  // this will return a promise
-  return Priorities.insertMany(seedData);
+    for (let i=1; i<=10; i++) {
+      seedData.push(generatePriorityData());
+    }
+    // this will return a promise
+    return Priorities.insertMany(seedData);
+  })
 }
 
 function generatePriorityData() {
@@ -33,6 +38,12 @@ function generatePriorityData() {
 }
 
 function generateUserData() {
+  return Users.hashPassword("password")
+        .then(function(hash) {
+            return { username: "meron93", password: hash };
+        })
+
+
   //return {
     //username: "meron93",
     //firstName: "Meron",
@@ -40,14 +51,14 @@ function generateUserData() {
     //password: "password"
   //}
 
-  chai.request(app)
-  .post('/users')
-  .send({
-    username: "meron93",
-    firstName: "Meron",
-    lastName: "Yemane",
-    password: "password"
-  });
+  // chai.request(app)
+  // .post('/users')
+  // .send({
+  //   username: "meron93",
+  //   firstName: "Meron",
+  //   lastName: "Yemane",
+  //   password: "password"
+  // });
 
   //return Users.hashPassword("password")
     //.then(function(hash) {
@@ -82,7 +93,6 @@ describe('Priority API resources', function() {
         .send({username: 'meron93', password: 'password'})
         .end(function(err, res) {
           Cookies = 'cookie-monster'
-          console.log("USERNAME = " + res)
           done();
         })
     });

@@ -42,14 +42,13 @@ const localStrategy = new LocalStrategy({
   passReqToCallback: true
   },
   function(req, username, password, done) {
-    console.log("USSES : " + username)
-    console.log("pass : " + password)
+    Users.count({}, function( err, count){
+      console.log( "Number of users:", count );
+    })
     Users
-    .findOne({username}, function (err, user) {
-      console.log("LOCAL FUNC :" + user)
+    .findOne({username: username}, function (err, user) {
       if (err) { 
-        console.log("IM IN THIS")
-        return done(err); 
+        return done("err"); 
       }
       if (!user) { 
         return done(null, false, {message: 'No user found.'})
@@ -155,7 +154,7 @@ userRouter.post('/login', passport.authenticate('local', {
 //});
 
 userRouter.get('/me',
-  passport.authenticate('basic', {session: true}),
+  passport.authenticate('local', {session: true}),
   (req, res) => res.json({user: req.user.apiRepr()})
 );
 
