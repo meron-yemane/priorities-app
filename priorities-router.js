@@ -16,18 +16,30 @@ function isAuthenticated(req, res, next) {
     return res.status(401).send({});
 }
 
-prioritiesRouter.get('/all', (req, res) => { 
-  Priorities
-    .find()
-    .exec()
-    .then(priorities => {
-      res.json(priorities.map((priorities) => priorities));
-    })
-    .catch(
-      err => {
-        console.error(err);
-        res.status(500).json({message: 'Internal server error'});
-      });
+prioritiesRouter.get('/all', isAuthenticated, (req, res) => {
+  console.log(req.user.id); 
+  Users
+    .findById(req.user.id)
+    .populate('_priorities')
+    .exec((err, priorities) => {
+      if (err) {
+        console.log("No priorities?!");
+      }
+      res.json(priorities._priorities);
+    });
+
+
+  // Priorities
+  //   .find()
+  //   .exec()
+  //   .then(priorities => {
+  //     res.json(priorities.map((priorities) => priorities));
+  //   })
+  //   .catch(
+  //     err => {
+  //       console.error(err);
+  //       res.status(500).json({message: 'Internal server error'});
+  //     });
 });
 
 prioritiesRouter.post('/create', isAuthenticated, (req, res) => {
