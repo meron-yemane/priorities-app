@@ -21,9 +21,25 @@ $(document).ready(function() {
 
   $("#signup-form").submit(function(e) {
     e.preventDefault();
-    $("#signup").hide();
-    // make AJAX call to create account
-    $("#homepage").show();    
+    let data = {};
+    data.username = $("#new-username").val();
+    data.password = $("#new-password").val();
+    data.firstName = $("#firstName").val();
+    data.lastName = $("#lastName").val();
+    $.ajax({
+      url: "/users",
+      type: "POST",
+      data: JSON.stringify(data),
+      contentType: "application/json",
+      dataType: "json"
+    }).done(function(data, status) {
+      console.log(data);
+      $("#signup").hide();
+      // make AJAX call to create account
+      $("#homepage").show();   
+    }).fail(function(err) {
+      console.log(err.responseText);
+    })   
   });
 
   $(document).on("click", "#login-button", function() {

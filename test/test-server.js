@@ -13,19 +13,19 @@ const {TEST_DATABASE_URL} = require('../config');
 chai.use(chaiHttp);
 
 function seedPriorityData() {
-  return generateUserData()
-  .then(function(userData) {
-    Users.create(userData);
-  })
-  .then(function() {
-    const seedData = [];
+  //return generateUserData()
+  // .then(function(userData) {
+  //   Users.create(userData);
+  // })
 
-    for (let i=1; i<=10; i++) {
-      seedData.push(generatePriorityData());
-    }
-    // this will return a promise
-    return Priorities.insertMany(seedData);
-  })
+  //.then(function() {
+    //const seedData = [];
+
+  for (let i=1; i<=10; i++) {
+    return chai.request(app)
+      .post('/priorities/create')
+      .send(generatePriorityData())
+  }
 }
 
 function generatePriorityData() {
@@ -41,6 +41,9 @@ function generateUserData() {
         .then(function(hash) {
             return { username: "meron93", password: hash };
         })
+        .then(function(userData) {
+          Users.create(userData);
+        })
 }
 
 function tearDownDb() {
@@ -55,18 +58,25 @@ describe('Priority API resources', function() {
     return runServer(TEST_DATABASE_URL);
   });
   beforeEach(function(done) {
-    seedPriorityData()
+    //seedPriorityData()
+    generateUserData()
     .then(function() {
       chai.request(app)
         .post('/users/login')
         .set('Content-Type', 'application/json')
-        .set('Cookie', 'name=cookie-monster')
+        //.set('Cookie', 'name=cookie-monster')
         .send({username: 'meron93', password: 'password'})
         .end(function(err, res) {
           Cookies = res.headers['set-cookie'].pop().split(';')[0];
+          console.log(res.headers)
+          console.log("Cookies : " + Cookies)
           done();
         })
-    });
+    })
+    .then(function() {
+      console.log("SEED PROORPE")
+      seedPriorityData()  
+    })
   });
   afterEach(function() {
     return tearDownDb();
@@ -78,9 +88,12 @@ describe('Priority API resources', function() {
   describe('GET endpoint', function() {
 
     it('should list all priorities', function() {
-      return chai.request(app)
-        .get('/priorities/all')
-        .then(function(res) {
+      var req = chai.request(app)
+        .get('/priorities/all');
+        //console.log("request heads" + req.headers)
+        req.cookies = Cookies;
+        console.log(req.cookies)
+        return req.then(function(res) {
           res.should.have.status(200);
           res.should.be.json;
           res.body.should.be.a('array');

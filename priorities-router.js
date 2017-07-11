@@ -10,6 +10,7 @@ prioritiesRouter.use(jsonParser);
 
 // Check if user is authenticated
 function isAuthenticated(req, res, next) {
+  console.log(req.user)
     if (req.user) {
         return next();
     }
