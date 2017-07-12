@@ -28,19 +28,6 @@ prioritiesRouter.get('/all', isAuthenticated, (req, res) => {
       }
       res.json(priorities._priorities);
     });
-
-
-  // Priorities
-  //   .find()
-  //   .exec()
-  //   .then(priorities => {
-  //     res.json(priorities.map((priorities) => priorities));
-  //   })
-  //   .catch(
-  //     err => {
-  //       console.error(err);
-  //       res.status(500).json({message: 'Internal server error'});
-  //     });
 });
 
 prioritiesRouter.post('/create', isAuthenticated, (req, res) => {
@@ -105,7 +92,7 @@ prioritiesRouter.post('/create', isAuthenticated, (req, res) => {
 //     });
 // });
 
-prioritiesRouter.delete('/:id', (req, res) => {
+prioritiesRouter.delete('/:id', isAuthenticated, (req, res) => {
   Priorities
     .findByIdAndRemove(req.params.id)
     .exec()
