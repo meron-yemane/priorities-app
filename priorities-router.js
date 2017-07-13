@@ -92,10 +92,13 @@ prioritiesRouter.get('/today', isAuthenticated, (req, res) => {
         res.status(500);
       }
     }).then(function(user) {
+    if (user._priorities.length === 0) {
+      return res.status(204).json({});
+    };
     if (user._priorities[user._priorities.length - 1].date_committed === moment().format("MMM Do YYYY")) {
       return res.status(200).json(user._priorities[user._priorities.length - 1]);
     };
-    res.status(204)
+    return res.status(204).json({});
   })
 });
 

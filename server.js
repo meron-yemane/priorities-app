@@ -41,12 +41,7 @@ app.use(require('express-session')({
     saveUninitialized: true
 }));
 
-//app.use(express.static('public'));
-//app.use(bodyParser.json());
-//app.use(cookieParser());
-//app.use(morgan('common'));
-//app.use(session({ secret: 'best ever' }));
-//app.use(session(sessionOpts));
+
 app.use(flash());
 
 

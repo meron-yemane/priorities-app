@@ -42,13 +42,13 @@ $(document).ready(function() {
           $("#set-goal").html(" ");
           $("#homepage-goal-display").show();
           $("#homepage-goal-display").html(goalHtml);
-        }
+        };
         $("#homepage").show();
        }).fail(function(err) {
-        console.log(err.responseText);
+        console.log(err);
        })
     }).fail(function(err) {
-      console.log(err.responseText);
+      console.log(err);
     }) 
   });
 

@@ -1,5 +1,5 @@
 const {BasicStrategy} = require('passport-http');
-const LocalStrategy   = require('passport-local').Strategy;
+const LocalStrategy   = require('passport-local');
 const express = require('express');
 const morgan = require('morgan');
 const jsonParser = require('body-parser').json();
@@ -42,26 +42,27 @@ const basicStrategy = new BasicStrategy({
     });
 });
 
+
 const localStrategy = new LocalStrategy({
-  session: true,
-  passReqToCallback: true
+  session: true
   },
-  function(req, username, password, done) {
-    Users.count({}, function( err, count){
-      console.log( "Number of users:", count );
-    })
-    Users
-    .findOne({username: username}, function (err, user) {
+  function(username, password, done) {
+    console.log("inside")
+    Users.findOne({username: username}, function (err, user) {
       if (err) { 
-        return done("err"); 
+        return done(err); 
       }
       if (!user) { 
-        return done(null, false, {message: 'No user found.'})
+        return done(null, false, {message: 'Incorrect username.'});
       }
-      if (!user.validatePassword(password)) { 
-        return done(null, false, {message: 'Oops! Wrong password.'}) 
-      }
-      return done(null, user);
+      user 
+        .validatePassword(password)
+        .then(valid => {
+          if (!valid) {
+            return done(null, false, {message: 'Oops! Wrong password.'}); 
+          }
+          return done(null, user);
+        })
     });
   });
 
@@ -152,25 +153,6 @@ userRouter.post('/login', passport.authenticate('local', {
     return res.status(200).send({})
   });
 
-//userRouter.post('/login', (req, res) => {
-  //  Users
-    //.find({username: req.body.username, password: req.body.password})
-    //.then(user => {
-      //console.log('USER LOG' + ' = ' + user)     
-      //res.json({user: req.user.apiRepr()})
-    //})
-    //.catch(err => {
-      //console.log(err)
-    //});
-
-      //console.log(user)
-      //if (err) {
-        //console.log(err)
-      //} else {
-        //console.log("USER LOG = " + user.username)
-        //res.json({user: req.user.apiRepr()})
-      //}
-//});
 
 userRouter.get('/me',
   passport.authenticate('local', {session: true}),
@@ -179,10 +161,3 @@ userRouter.get('/me',
 
 
 module.exports = {userRouter};
-
-//('/login', passport.authenticate('basic', {
-  //  successRedirect: '/',
-    //failureRedirect: '/login',
-    //failureFlash: true,
-    //session: true 
-  //}),
