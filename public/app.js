@@ -24,9 +24,29 @@ $(document).ready(function() {
       contentType: "application/json",
       dataType: "json"
     }).done(function(data, status) {
-      console.log(data);
        $("#login").hide();
-       $("#homepage").show(); 
+       $.ajax({
+        url: "priorities/today",
+        type: "GET",
+        dataType: "json"
+       }).done(function(data, status) {
+        if (status === "success") {
+          var goal = data.goal;
+          var goalHtml = "<h2 class='text-center'>Today's priority: " + goal + "</h2>";
+          goalHtml += "<h1 class='text-center'>" //+ $("#goal-text").val();
+          goalHtml += "&nbsp;&nbsp;<span id='delete-goal-glyphicon' class='glyphicon glyphicon-remove' role='button' aria-hidden='true'></span>";
+          goalHtml += "&nbsp;&nbsp;<span id='goal-completion-glyphicon' class='glyphicon glyphicon-ok' role='button' aria-hidden='true'></span>";
+          goalHtml += "&nbsp;&nbsp;<span id='edit-goal-glyphicon' class='glyphicon glyphicon-pencil' role='button' aria-hidden='true'></span>";
+          goalHtml += "</h1>";
+          $("#goal-text").val("");
+          $("#set-goal").html(" ");
+          $("#homepage-goal-display").show();
+          $("#homepage-goal-display").html(goalHtml);
+        }
+        $("#homepage").show();
+       }).fail(function(err) {
+        console.log(err.responseText);
+       })
     }).fail(function(err) {
       console.log(err.responseText);
     }) 
@@ -89,6 +109,7 @@ $(document).ready(function() {
       dataType: "json"
     }).done(function(data, status) {
       console.log(data);
+      //todaysPriorityId = data.id;
       var goalHtml = "<h2 class='text-center'>Today's priority: " + goal + "</h2>";
       goalHtml += "<h1 class='text-center'>" //+ $("#goal-text").val();
       goalHtml += "&nbsp;&nbsp;<span id='delete-goal-glyphicon' class='glyphicon glyphicon-remove' role='button' aria-hidden='true'></span>";
@@ -118,19 +139,27 @@ $(document).ready(function() {
 
   $(document).on("submit", "#edited-goal", function(e) {
     e.preventDefault();
-    console.log("edit");
     var goal = $("#edited-goal-text").val();
-    console.log("goal:" + goal)
-    // PUT request below 
-    mock_goals.goals[mock_goals.goals.length - 1].goal = goal;
-    console.log(mock_goals.goals);
-    var goalHtml = "<h2 class='text-center'>Today's priority: " + goal + "</h2>";
-    goalHtml += "<h1 class='text-center'>" //+ $("#goal-text").val();
-    goalHtml += "&nbsp;&nbsp;<span id='delete-goal-glyphicon' class='glyphicon glyphicon-remove' role='button' aria-hidden='true'></span>";
-    goalHtml += "&nbsp;&nbsp;<span id='goal-completion-glyphicon' class='glyphicon glyphicon-ok' role='button' aria-hidden='true'></span>";
-    goalHtml += "&nbsp;&nbsp;<span id='edit-goal-glyphicon' class='glyphicon glyphicon-pencil' role='button' aria-hidden='true'></span>";
-    goalHtml += "</h1>";
-    $("#homepage-goal-display").html(goalHtml);
+    data = {};
+    data.goal = goal;
+    $.ajax({
+      url:"priorities/" + todaysPriorityId,
+      type: "PUT",
+      data: JSON.stringify(data),
+      contentType: "application/json",
+      dataType: "json"
+    }).done(function(data, status) {
+      console.log(data);
+      var goalHtml = "<h2 class='text-center'>Today's priority: " + goal + "</h2>";
+      goalHtml += "<h1 class='text-center'>" //+ $("#goal-text").val();
+      goalHtml += "&nbsp;&nbsp;<span id='delete-goal-glyphicon' class='glyphicon glyphicon-remove' role='button' aria-hidden='true'></span>";
+      goalHtml += "&nbsp;&nbsp;<span id='goal-completion-glyphicon' class='glyphicon glyphicon-ok' role='button' aria-hidden='true'></span>";
+      goalHtml += "&nbsp;&nbsp;<span id='edit-goal-glyphicon' class='glyphicon glyphicon-pencil' role='button' aria-hidden='true'></span>";
+      goalHtml += "</h1>";
+      $("#homepage-goal-display").html(goalHtml);
+    }).fail(function(err) {
+      console.log(err);
+    });
   });
 
 
