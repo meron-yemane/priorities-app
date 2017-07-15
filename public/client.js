@@ -44,7 +44,6 @@ var mock_goals = {
     }
   ]
 };
-console.log("length =" + mock_goals.goals.length);
 
 function getGoalPercentages(callbackFn) {
   setTimeout(function(){ callbackFn(mock_goals)}, 100);

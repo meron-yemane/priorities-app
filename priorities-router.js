@@ -19,9 +19,6 @@ function isAuthenticated(req, res, next) {
 }
 
 prioritiesRouter.get('/all', isAuthenticated, (req, res) => {
-  Priorities.count({}, function( err, count){
-      console.log( "Number of priorities:", count );
-    })
   console.log(req.user.id); 
   Users
     .findById(req.user.id)
@@ -103,48 +100,31 @@ prioritiesRouter.get('/today', isAuthenticated, (req, res) => {
 });
 
 prioritiesRouter.put('/:id', isAuthenticated, (req, res) => {
-  if(!(req.params._id === req.body._id)) {
+  if(!(req.params.id === req.body._id)) {
     const message = ('Request path id must match request body id');
-    console.error(message);
     res.status(400).json({message: 'Request path id must match request body id'});
   };
-  // use the get all route and find the date that matches today's then update. 
-  // Priorities.findOneAndUpdate({id:req.params.id}, {goal: req.body.goal},
-  //   (err, priority) => {
-  //     if(err) {
-  //       return res.status(400);
-  //     }
-  //     res.json(priority);
-  //   }
-  // );
+  Priorities
+    .findByIdAndUpdate({_id: req.params.id}, {$set: {goal: req.body.goal}}, function(err, priority) {
+      if (err) {
+        return res.status(500).json(err);
+      }
+      return res.status(200).json(priority);
+    });
+});
 
-
-
-  var getPriorities = prioritiesRouter.get('/all', isAuthenticated, (req, res) => {
-    Priorities.count({}, function( err, count){
-      console.log( "Number of priorities:", count );
-    })
-    console.log(req.user.id); 
-    Users
-      .findById(req.user.id)
-      .populate('_priorities')
-      .exec((err, priorities) => {
-        if (err) {
-          console.log("No priorities?!");
-        }
-        res.json(priorities._priorities);
-      });
-  })
-
-  getPriorities.then(function(err, priorities) {
-    if (err) {
-      return res.status(400);
-    }
-    if (priorities[-1].date_committed === moment().format("MMM Do YYYY")) {
-      res.status(200).json(priorities[-1]);
-    };
-    res.status(204)
-  })
+prioritiesRouter.put('/completed/:id', isAuthenticated, (req, res) => {
+  // if(!(req.params.id === req.body._id)) {
+  //   const message = ('Request path id must match request body id');
+  //   res.status(400).json({message: 'Request path id must match request body id'});
+  // };
+  Priorities 
+    .findByIdAndUpdate({_id: req.params.id}, {$set: {completed: true}}, function(err, priority) {
+      if (err) {
+        return res.status(500).json(err);
+      }
+      return res.status(200).json(priority);
+    });
 });
 
 module.exports = {prioritiesRouter};

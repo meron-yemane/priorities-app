@@ -1,4 +1,6 @@
 $(document).ready(function() {
+  let currentId;
+  let currentGoal;
 
   $("#signup, #homepage, #progresspage").hide();
 
@@ -31,8 +33,9 @@ $(document).ready(function() {
         dataType: "json"
        }).done(function(data, status) {
         if (status === "success") {
-          var goal = data.goal;
-          var goalHtml = "<h2 class='text-center'>Today's priority: " + goal + "</h2>";
+          currentId = data._id;
+          currentGoal = data.goal;
+          var goalHtml = "<h2 class='text-center'>Today's priority: " + currentGoal + "</h2>";
           goalHtml += "<h1 class='text-center'>" //+ $("#goal-text").val();
           goalHtml += "&nbsp;&nbsp;<span id='delete-goal-glyphicon' class='glyphicon glyphicon-remove' role='button' aria-hidden='true'></span>";
           goalHtml += "&nbsp;&nbsp;<span id='goal-completion-glyphicon' class='glyphicon glyphicon-ok' role='button' aria-hidden='true'></span>";
@@ -109,8 +112,9 @@ $(document).ready(function() {
       dataType: "json"
     }).done(function(data, status) {
       console.log(data);
-      //todaysPriorityId = data.id;
-      var goalHtml = "<h2 class='text-center'>Today's priority: " + goal + "</h2>";
+      currentId = data._id;
+      currentGoal = data.goal;
+      var goalHtml = "<h2 class='text-center'>Today's priority: " + currentGoal + "</h2>";
       goalHtml += "<h1 class='text-center'>" //+ $("#goal-text").val();
       goalHtml += "&nbsp;&nbsp;<span id='delete-goal-glyphicon' class='glyphicon glyphicon-remove' role='button' aria-hidden='true'></span>";
       goalHtml += "&nbsp;&nbsp;<span id='goal-completion-glyphicon' class='glyphicon glyphicon-ok' role='button' aria-hidden='true'></span>";
@@ -125,7 +129,7 @@ $(document).ready(function() {
   });
 
   $(document).on("click", "#edit-goal-glyphicon", function() {
-    var goalToEdit = mock_goals.goals[mock_goals.goals.length - 1].goal;
+    var goalToEdit = currentGoal;
     var editHtml = "<h2 class='text-center'>Today's priority: </h2>"; 
     editHtml += "<div class='row'>";
     editHtml += "<div class='col-sm-6 col-sm-offset-3'>";
@@ -140,17 +144,18 @@ $(document).ready(function() {
   $(document).on("submit", "#edited-goal", function(e) {
     e.preventDefault();
     var goal = $("#edited-goal-text").val();
+    currentGoal = goal;
     data = {};
     data.goal = goal;
+    data._id = currentId;
     $.ajax({
-      url:"priorities/" + todaysPriorityId,
+      url:"priorities/" + currentId,
       type: "PUT",
       data: JSON.stringify(data),
       contentType: "application/json",
       dataType: "json"
     }).done(function(data, status) {
-      console.log(data);
-      var goalHtml = "<h2 class='text-center'>Today's priority: " + goal + "</h2>";
+      var goalHtml = "<h2 class='text-center'>Today's priority: " + currentGoal + "</h2>";
       goalHtml += "<h1 class='text-center'>" //+ $("#goal-text").val();
       goalHtml += "&nbsp;&nbsp;<span id='delete-goal-glyphicon' class='glyphicon glyphicon-remove' role='button' aria-hidden='true'></span>";
       goalHtml += "&nbsp;&nbsp;<span id='goal-completion-glyphicon' class='glyphicon glyphicon-ok' role='button' aria-hidden='true'></span>";
@@ -162,32 +167,49 @@ $(document).ready(function() {
     });
   });
 
-
   $(document).on("click", "#goal-completion-glyphicon", function() {
-    var goalHtml = "<h2>Today's priority:</h2>";
-    goalHtml += "<h1>" + $("#goal-text").val();
-    goalHtml += "&nbsp;&nbsp;<span id='goal-completion-glyphicon' class='glyphicon glyphicon-ok' aria-hidden='true'></span>";
-    goalHtml += "&nbsp;&nbsp;<span id='goal-completion-glyphicon' class='glyphicon glyphicon-remove' aria-hidden='true'></span>";
-    goalHtml += "&nbsp;&nbsp;<span id='goal-completion-glyphicon' class='glyphicon glyphicon-delete' aria-hidden='true'></span>";
-    goalHtml += "</h1>";
-    $("#homepage-goal-display").html(goalHtml);
+    $.ajax({
+      url: "priorities/completed/" + currentId,
+      type: "PUT"
+    }).done(function(data, status) {
+      var completedGoalHtml = `<h1 class='text-center'><del>${currentGoal}</del><h1>`;
+
+
+      // var goalHtml = "<h2>Today's priority:</h2>";
+      // goalHtml += "<h1>" + $("#goal-text").val();
+      // goalHtml += "&nbsp;&nbsp;<span id='goal-completion-glyphicon' class='glyphicon glyphicon-ok' aria-hidden='true'></span>";
+      // goalHtml += "&nbsp;&nbsp;<span id='goal-completion-glyphicon' class='glyphicon glyphicon-remove' aria-hidden='true'></span>";
+      // goalHtml += "&nbsp;&nbsp;<span id='goal-completion-glyphicon' class='glyphicon glyphicon-delete' aria-hidden='true'></span>";
+      // goalHtml += "</h1>";
+      $("#homepage-goal-display").html(completedGoalHtml);
+    }).fail(function(err) {
+      console.log(err);
+    });
   });
 
+
   $(document).on("click", "#delete-goal-glyphicon", function(){
-    var setGoal = "<form id='set-goal' role='form'>";
-    setGoal += "<div class='row'>";
-    setGoal += "<div class='col-sm-8 col-sm-offset-2'>"
-    setGoal += "<div class='input-group input-group-lg'>";
-    setGoal += "<input type='text' class='form-control' id='goal-text' placeholder='Enter your most important goal for the day.' required>";
-    setGoal += "<div class='input-group-btn'>"; 
-    setGoal += "<button class='btn btn-primary' type='submit'>Submit</button>";
-    setGoal += "</div>";
-    setGoal += "</div>";
-    setGoal += "</div>";
-    setGoal += "</div>";
-    setGoal += "</form>";
-    $("#goal-submission-form").html(setGoal);
-    $("#homepage-goal-display").html("<p></p>");
+    $.ajax({
+      url: "priorities/" + currentId,
+      type: "DELETE",
+    }).done(function(data, status) {
+      var setGoal = "<form id='set-goal' role='form'>";
+      setGoal += "<div class='row'>";
+      setGoal += "<div class='col-sm-8 col-sm-offset-2'>"
+      setGoal += "<div class='input-group input-group-lg'>";
+      setGoal += "<input type='text' class='form-control' id='goal-text' placeholder='Enter your most important goal for the day.' required>";
+      setGoal += "<div class='input-group-btn'>"; 
+      setGoal += "<button class='btn btn-primary' type='submit'>Submit</button>";
+      setGoal += "</div>";
+      setGoal += "</div>";
+      setGoal += "</div>";
+      setGoal += "</div>";
+      setGoal += "</form>";
+      $("#goal-submission-form").html(setGoal);
+      $("#homepage-goal-display").html("<p></p>");
+    }).fail(function(err) {
+      console.log(err);
+    });
   });
 
 });
