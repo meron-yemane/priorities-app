@@ -32,9 +32,19 @@ $(document).ready(function() {
         type: "GET",
         dataType: "json"
        }).done(function(data, status) {
+        console.log("data:" + data.completed);
         if (status === "success") {
-          currentId = data._id;
           currentGoal = data.goal;
+          if (data.completed) {
+            console.log("currentGoal: " + currentGoal);
+            var completedGoalHtml = `<h1 class='text-center'><del>${currentGoal}</del><h1>`;
+            $("#homepage-goal-display").html(completedGoalHtml);
+            $("#homepage").show();
+            $("#set-goal").hide();
+            $("#homepage-goal-display").show();
+          } else {
+          console.log("im in")
+          currentId = data._id;
           var goalHtml = "<h2 class='text-center'>Today's priority: " + currentGoal + "</h2>";
           goalHtml += "<h1 class='text-center'>" //+ $("#goal-text").val();
           goalHtml += "&nbsp;&nbsp;<span id='delete-goal-glyphicon' class='glyphicon glyphicon-remove' role='button' aria-hidden='true'></span>";
@@ -45,8 +55,11 @@ $(document).ready(function() {
           $("#set-goal").html(" ");
           $("#homepage-goal-display").show();
           $("#homepage-goal-display").html(goalHtml);
-        };
+          } 
+        } else {
+        console.log("homepage displayed");
         $("#homepage").show();
+        }
        }).fail(function(err) {
         console.log(err);
        })
@@ -173,14 +186,6 @@ $(document).ready(function() {
       type: "PUT"
     }).done(function(data, status) {
       var completedGoalHtml = `<h1 class='text-center'><del>${currentGoal}</del><h1>`;
-
-
-      // var goalHtml = "<h2>Today's priority:</h2>";
-      // goalHtml += "<h1>" + $("#goal-text").val();
-      // goalHtml += "&nbsp;&nbsp;<span id='goal-completion-glyphicon' class='glyphicon glyphicon-ok' aria-hidden='true'></span>";
-      // goalHtml += "&nbsp;&nbsp;<span id='goal-completion-glyphicon' class='glyphicon glyphicon-remove' aria-hidden='true'></span>";
-      // goalHtml += "&nbsp;&nbsp;<span id='goal-completion-glyphicon' class='glyphicon glyphicon-delete' aria-hidden='true'></span>";
-      // goalHtml += "</h1>";
       $("#homepage-goal-display").html(completedGoalHtml);
     }).fail(function(err) {
       console.log(err);
