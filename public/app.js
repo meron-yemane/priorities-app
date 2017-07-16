@@ -105,9 +105,19 @@ $(document).ready(function() {
     $("#homepage").show();
   });
 
-  $(document).on("click", "#logout-button", function() {
-    $("#progresspage").hide();
-    $("#homepage").hide();
+  $(document).on("click", "#logout-button", function(e) {
+    e.preventDefault();
+    $.ajax({
+      url: "/users/logout",
+      type: "GET"
+    }).done(function(data, status) {
+      $("#progresspage").hide();
+      $("#homepage").hide();
+      ("#login").show();
+    }).fail(function(err) {
+      console.log(err.responseText);
+    })
+    $("#password").val("");
     $("#login").show();
   });
 

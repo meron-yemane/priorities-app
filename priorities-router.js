@@ -127,4 +127,5 @@ prioritiesRouter.put('/completed/:id', isAuthenticated, (req, res) => {
     });
 });
 
+
 module.exports = {prioritiesRouter};

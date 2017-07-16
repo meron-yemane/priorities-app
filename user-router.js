@@ -153,6 +153,10 @@ userRouter.post('/login', passport.authenticate('local', {
     return res.status(200).send({})
   });
 
+userRouter.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/')
+});
 
 userRouter.get('/me',
   passport.authenticate('local', {session: true}),
