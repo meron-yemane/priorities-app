@@ -5,6 +5,7 @@ const morgan = require('morgan');
 const jsonParser = require('body-parser').json();
 const passport = require('passport');
 const mongoose = require('mongoose');
+const flash = require('connect-flash');
 
 const {Users} = require('./models');
 
@@ -44,10 +45,10 @@ const basicStrategy = new BasicStrategy({
 
 
 const localStrategy = new LocalStrategy({
-  session: true
+  session: true,
+  passReqToCallback: true
   },
-  function(username, password, done) {
-    console.log("inside")
+  function(req, username, password, done) {
     Users.findOne({username: username}, function (err, user) {
       if (err) { 
         return done(err); 
@@ -59,7 +60,7 @@ const localStrategy = new LocalStrategy({
         .validatePassword(password)
         .then(valid => {
           if (!valid) {
-            return done(null, false, {message: 'Oops! Wrong password.'}); 
+            return done(null, false, {message: 'Ooops! Wrong passwword.'}); 
           }
           return done(null, user);
         })
@@ -148,7 +149,8 @@ userRouter.post('/', (req, res) => {
 
 userRouter.post('/login', passport.authenticate('local', {
         failureRedirect : '/login', 
-        failureFlash : true 
+        failureFlash : true, 
+        successFlash : 'Welcome!'
     }), function(req, res) {
     return res.status(200).send({})
   });

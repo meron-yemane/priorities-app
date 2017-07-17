@@ -15,6 +15,7 @@ function isAuthenticated(req, res, next) {
     if (req.user) {
         return next();
     }
+    console.log("NOT AUTH");
     return res.status(401).send({});
 }
 
@@ -23,11 +24,12 @@ prioritiesRouter.get('/all', isAuthenticated, (req, res) => {
   Users
     .findById(req.user.id)
     .populate('_priorities')
-    .exec((err, priorities) => {
+    .exec((err, user) => {
       if (err) {
         console.log("No priorities?!");
       }
-      res.json(priorities._priorities);
+      console.log("user prior: " + user._priorities)
+      return res.status(200).json(user._priorities);
     });
 });
 
@@ -90,6 +92,7 @@ prioritiesRouter.get('/today', isAuthenticated, (req, res) => {
       }
     }).then(function(user) {
     if (user._priorities.length === 0) {
+      //console.log("USER PRIO: " + user._priorities)
       return res.status(204).json({});
     };
     if (user._priorities[user._priorities.length - 1].date_committed === moment().format("MMM Do YYYY")) {
@@ -126,6 +129,7 @@ prioritiesRouter.put('/completed/:id', isAuthenticated, (req, res) => {
       return res.status(200).json(priority);
     });
 });
+
 
 
 module.exports = {prioritiesRouter};

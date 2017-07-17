@@ -32,18 +32,15 @@ $(document).ready(function() {
         type: "GET",
         dataType: "json"
        }).done(function(data, status) {
-        console.log("data:" + data.completed);
         if (status === "success") {
           currentGoal = data.goal;
           if (data.completed) {
-            console.log("currentGoal: " + currentGoal);
             var completedGoalHtml = `<h1 class='text-center'><del>${currentGoal}</del><h1>`;
             $("#homepage-goal-display").html(completedGoalHtml);
             $("#homepage").show();
             $("#set-goal").hide();
             $("#homepage-goal-display").show();
           } else {
-          console.log("im in")
           currentId = data._id;
           var goalHtml = "<h2 class='text-center'>Today's priority: " + currentGoal + "</h2>";
           goalHtml += "<h1 class='text-center'>" //+ $("#goal-text").val();
@@ -57,7 +54,6 @@ $(document).ready(function() {
           $("#homepage-goal-display").html(goalHtml);
           } 
         } else {
-        console.log("homepage displayed");
         $("#homepage").show();
         }
        }).fail(function(err) {
@@ -82,7 +78,6 @@ $(document).ready(function() {
       contentType: "application/json",
       dataType: "json"
     }).done(function(data, status) {
-      console.log(data);
       $("#signup").hide();
       $("#homepage").show();   
     }).fail(function(err) {
@@ -97,7 +92,57 @@ $(document).ready(function() {
 
   $(document).on("click", "#progress-button", function() {
     $("#homepage").hide();
-    $("#progresspage").show();
+    $.ajax({
+      url: "/priorities/all",
+      type: "GET"
+    }).done(function(data, status) {
+      console.log("data: " + data.length)
+      var completed = 0;
+      for (goal=0; goal<data.length; goal++) {
+        if (data[goal].completed === "true") {
+        completed++
+        };
+      };
+      console.log("completed: " + completed)
+      var percentage = completed/data.length * 100;
+      var html = "<h2> You've succeeded in completing " + Math.round(percentage) + "% of your most important goals.</h2>";
+      $("#progressStats").html(html);
+      $(document).ready(function() {
+      var ctx = document.getElementById('myChart').getContext('2d');
+      //ctx.width = 30;
+      //ctx.height = 30;
+      var chart = new Chart(ctx, {
+      // The type of chart we want to create
+      type: 'pie',
+
+      // The data for our dataset
+      data: {
+        labels: ["Completed Priorities", "Incompleted Priorities"],
+        datasets: [{
+          label: "Priority Performance",
+          backgroundColor: [
+          'rgba(76, 174, 86, 1)',
+          'rgba(196, 69, 75, 1)'
+          ],
+          borderColor: [
+          'rgba(76, 174, 86, 1)',
+          'rgba(196, 69, 75, 1)'
+          ],
+          data: [percentage, 100-percentage],
+        }]
+      },
+
+      // Configuration options go here
+      options: {
+        responsive: false,
+        maintainAspectRatio: true
+      }
+      });
+      });
+      $("#progresspage").show();
+    }).fail(function(err) {
+      console.log(err);
+    })
   });
 
   $(document).on("click", "#homenav-button", function() {
@@ -113,12 +158,11 @@ $(document).ready(function() {
     }).done(function(data, status) {
       $("#progresspage").hide();
       $("#homepage").hide();
-      ("#login").show();
+      $("#password").val("");
+      $("#login").show();
     }).fail(function(err) {
       console.log(err.responseText);
     })
-    $("#password").val("");
-    $("#login").show();
   });
 
   $(document).on("submit", "#set-goal", function(e) {

@@ -21,7 +21,7 @@ function seedPriorityData() {
   //.then(function() {
     //const seedData = [];
 
-  for (let i=1; i<=10; i++) {
+  for (let i=1; i<=5; i++) {
     return chai.request(app)
       .post('/priorities/create')
       .send(generatePriorityData())
@@ -67,15 +67,13 @@ describe('Priority API resources', function() {
         //.set('Cookie', 'name=cookie-monster')
         .send({username: 'meron93', password: 'password'})
         .end(function(err, res) {
-          Cookies = res.headers['set-cookie'].pop().split(';')[0];
-          console.log(res.headers)
-          console.log("Cookies : " + Cookies)
+          console.log("res.headers" + res.headers['set-cookie'])
+          Cookies = res.headers['set-cookie'].pop().split(';')[0].split('=')[1];
           done();
         })
     })
     .then(function() {
-      console.log("SEED PROORPE")
-      seedPriorityData()  
+      seedPriorityData();  
     })
   });
   afterEach(function() {
@@ -87,23 +85,18 @@ describe('Priority API resources', function() {
 
   describe('GET endpoint', function() {
 
-    it('should list all priorities', function() {
-      var req = chai.request(app)
-        .get('/priorities/all');
-        //console.log("request heads" + req.headers)
+    it('should list all priorities for user', function() {
+      var req = chai.request(app).get('/priorities/all');
+        let res;
         req.cookies = Cookies;
-        console.log(req.cookies)
-        return req.then(function(res) {
+        console.log("cookies: " + req.cookies);
+        return req.then(function(_res) {
+          res = _res;
           res.should.have.status(200);
           res.should.be.json;
           res.body.should.be.a('array');
           res.body.length.should.be.above(0);
-          const expectedKeys = ['completed', 'goal', 'date_committed'];
-          res.body.forEach(function(item) {
-            item.should.be.a('object');
-            item.should.include.keys(expectedKeys);
           });
-        });
     });
   });
 
@@ -176,6 +169,7 @@ describe('Priority API resources', function() {
         .findOne()
         .exec()
         .then(function(_priority) {
+          console.log("priotity: " + _priority)
           priority = _priority;
           return chai.request(app).delete(`/priorities/${priority._id}`);
         })
