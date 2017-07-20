@@ -148,12 +148,16 @@ userRouter.post('/', (req, res) => {
 });
 
 userRouter.post('/login', passport.authenticate('local', {
-        failureRedirect : '/login', 
+        failureRedirect : '/users/login', 
         failureFlash : true, 
         successFlash : 'Welcome!'
     }), function(req, res) {
     return res.status(200).send({})
   });
+
+userRouter.get('/login', function(req, res) {
+  res.send("bad login")
+});
 
 userRouter.get('/logout', function(req, res){
   req.logout();

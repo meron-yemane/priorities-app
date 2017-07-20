@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"
     integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
     crossorigin="anonymous"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous">
     </script>
@@ -17,50 +18,57 @@
   <body class="container">
 
     <div class="row" id="login">
-      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
-        <h1 class="text-center text-info">Login</h1>
-        <form id="login-form" novalidate>
-          <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" class="form-control" id="username" placeholder="Username" required>
+      <h1 class="text-center text-primary">RightOfWay&nbsp;<span class="fa fa-arrow-right"></span></h1>
+      <div class="col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3" id="loginContainer">
+        <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-8 col-lg-offset-2" id="loginData">
+          <h4 class="text-center welcomeMessage" >Welcome to your priority tracker! RightOfWay steers you away from productive procrastination by providing a daily to-do-list that allows for only one item, your most important goal.</h4>
+          <form id="login-form" novalidate>
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input type="text" class="form-control" id="username" placeholder="Username" required>
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" class="form-control" id="password" placeholder="Password" required>
+            </div>
+            <button type="submit" class="btn btn-primary pull-right">Login</button>
+          </form>
+          <div class="row clearfix">
+            <button type="button" id="sign-up-button" class="btn btn-link">Click here to sign-up!</button>
           </div>
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" placeholder="Password" required>
-          </div>
-          <button type="submit" class="btn btn-primary pull-right">Submit</button>
-        </form>
-        <div class="row clearfix">
-          <button type="button" id="sign-up-button" class="btn btn-link">Click here to sign-up!</button>
         </div>
       </div>
     </div>
 
     <div class="row" id="signup">
-      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
-        <h1 class="text-center text-info">Sign-Up</h1>
-        <form id="signup-form">
-          <div class="form-group">
-            <div class="form-inline text-center">
-
+      <h1 class="text-center text-primary">RightOfWay&nbsp;<span class="fa fa-arrow-right"></span></h1>
+      <div class="col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3" id="signupContainer">
+        <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-8 col-lg-offset-2">
+          <form id="signup-form">
+            <div class="form-group">
+              <label for="firstName">First Name</label>
               <input id="firstName" class="form-control" name="firstname" placeholder="First Name" type="text" required autofocus />
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name</label>
               <input id="lastName" class="form-control" name="lastname" placeholder="Last Name" type="text" required />
             </div>
+            <div class="form-group">
+              <label for="new-username">Your Username</label>
+              <input id="new-username" class="form-control" name="username" placeholder="Your Username" type="text" required />
+            </div>
+            <div class="form-group">
+              <label for="new-password">New Password</label>
+              <input id="new-password" class="form-control" name="password" placeholder="New Password" type="password" required />
+            </div>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign-Up</button>
+          </form>
+          <div class="row clearfix">
+            <button type="button" id="login-button" class="btn btn-link">Already a member? Click here to login!</button>
           </div>
-          <div class="form-group">
-            <input id="new-username" class="form-control" name="username" placeholder="Your Username" type="text" required />
-          </div>
-          <div class="form-group">
-            <input id="new-password" class="form-control" name="password" placeholder="New Password" type="password" required />
-          </div>
-          <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
-        </form>
-        <div class="row clearfix">
-          <button type="button" id="login-button" class="btn btn-link">Already a member? Click here to login!</button>
         </div>
       </div>
     </div>
-
 
 
     <div class="row" id="homepage">
@@ -74,17 +82,17 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">RightOfWay</a>
+            <a class="navbar-brand text-primary" href="#">RightOfWay&nbsp;<span class="fa fa-arrow-right"></span></a>
           </div>
 
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
               <li class="active"><a href="#">Home<span class="sr-only">(current)</span></a></li>
-              <li><a href="#" id="progress-button">Progress</a></li>
+              <li><a href="#" class="progress-button">Progress</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-              <li><a href="#" id="logout-button">Logout</a></li>
+              <li><a href="#" class="logout-button">Logout</a></li>
             </ul>
           </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
@@ -93,6 +101,7 @@
       <form id="set-goal" role="form">
         <div class="row">
           <div class="col-sm-8 col-sm-offset-2">
+            <label for="goal-text">Today's Priority:</label>
             <div class="input-group input-group-lg">
               <input type="text" class="form-control" id="goal-text" placeholder="Enter your most important goal for the day." required>
               <div class="input-group-btn">
@@ -105,7 +114,7 @@
       <div id="homepage-goal-display" class="row"></div>
     </div>
 
-    <div id="progresspage">
+    <div class="row" id="progresspage">
       <nav class="navbar navbar-default">
         <div class="container-fluid">
           <!-- Brand and toggle get grouped for better mobile display -->
@@ -116,24 +125,23 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">RightOfWay</a>
+            <a class="navbar-brand text-primary" href="#">RightOfWay&nbsp;<span class="fa fa-arrow-right"></span></a>
           </div>
 
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
               <li><a href="#" id="homenav-button">Home<span class="sr-only">(current)</span></a></li>
-              <li class="active"><a href="#" id="progress-button">Progress</a></li>
+              <li class="active"><a href="#" class="progress-button">Progress</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-              <li><a href="#" id="logout-button">Logout</a></li>
+              <li><a href="#" class="logout-button">Logout</a></li>
             </ul>
           </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
       </nav>
-      <h3 class="text-center text-info">Here are some stats on your priority completion performance:</h3>
       <div id="progressStats"></div>
-      <canvas id="myChart" width="600" height="600"></canvas>
+      <canvas id="myChart" width="450" height="450"></canvas>
     </div>
   </body>
 </html>

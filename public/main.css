@@ -1,3 +1,49 @@
 #signup, #homepage, #progresspage {
   display: none;
 }
+
+.navbar-default .navbar-brand {
+  color: #337ab7;
+}
+
+#myChart {
+  margin: 0 auto;
+}
+
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px white inset !important;
+}
+
+body {
+  background-color: #B0E0E6;
+}
+
+#loginContainer, #signupContainer{
+  margin-top: 4%;
+  background-color: #5F9EA0;
+  border-radius: 8px;
+}
+
+#loginData {
+  padding: 15% 0 20% 0;
+}
+
+.welcomeMessage {
+  margin-bottom: 20%;
+  color: #F0F0F0;
+}
+
+#sign-up-button, #login-button {
+  color: #F0F0F0;
+}
+
+#signup-form {
+  padding: 15% 0 20% 0;
+}
+
+
+
+
+
+
+

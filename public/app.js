@@ -15,6 +15,7 @@ $(document).ready(function() {
   // });
 
   $("#login-form").submit(function(e) {
+    console.log("logig-form working")
     e.preventDefault();
     let data = {};
     data.username = $("#username").val();
@@ -26,6 +27,7 @@ $(document).ready(function() {
       contentType: "application/json",
       dataType: "json"
     }).done(function(data, status) {
+        console.log("login http req working")
        $("#login").hide();
        $.ajax({
         url: "priorities/today",
@@ -51,9 +53,11 @@ $(document).ready(function() {
           $("#goal-text").val("");
           $("#set-goal").html(" ");
           $("#homepage-goal-display").show();
+          console.log("home showing")
           $("#homepage-goal-display").html(goalHtml);
           } 
         } else {
+          console.log("hp should be dis")
         $("#homepage").show();
         }
        }).fail(function(err) {
@@ -90,7 +94,7 @@ $(document).ready(function() {
     $("#login").show();
   });
 
-  $(document).on("click", "#progress-button", function() {
+  $(document).on("click", ".progress-button", function() {
     $("#homepage").hide();
     $.ajax({
       url: "/priorities/all",
@@ -105,7 +109,7 @@ $(document).ready(function() {
       };
       console.log("completed: " + completed)
       var percentage = completed/data.length * 100;
-      var html = "<h2> You've succeeded in completing " + Math.round(percentage) + "% of your most important goals.</h2>";
+      var html = "<h2 class='text-center'> You've succeeded in completing " + Math.round(percentage) + "% of your most important goals.</h2>";
       $("#progressStats").html(html);
       $(document).ready(function() {
       var ctx = document.getElementById('myChart').getContext('2d');
@@ -150,7 +154,7 @@ $(document).ready(function() {
     $("#homepage").show();
   });
 
-  $(document).on("click", "#logout-button", function(e) {
+  $(document).on("click", ".logout-button", function(e) {
     e.preventDefault();
     $.ajax({
       url: "/users/logout",
