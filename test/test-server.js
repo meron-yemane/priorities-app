@@ -3,6 +3,7 @@ const chaiHttp = require('chai-http');
 const {Priorities, Users} = require('../models');
 const faker = require('faker');
 const mongoose = require('mongoose');
+const moment = require('moment');
 
 const {app, runServer, closeServer} = require('../server');
 const should = chai.should();
@@ -25,28 +26,25 @@ function generatePriorities() {
 
 function generatePriorityData() {
   return {
-    date_committed: faker.date.past(),
+    date_committed: moment().format("MMM Do YYYY"),
     completed: [true, false][Math.round(Math.random())],
     goal: faker.lorem.sentence(6)
   }
 }
 
 function generateUserData() {
-  return chai.request(app)
-  .post('/users/')
-  .send({username: "meron93", password: "password", firstName: "Meron", lastName: "Yemane"});
-
-  // return Users.hashPassword("password")
-  //       .then(function(hash) {
-  //           return { username: "meron93", password: hash };
-  //       })
-  //       .then(function(userData) {
-  //         Users.create(userData);
-  //       })
-  //       .then(function(user) {
-  //         console.log("genUser: " + user);
-  //         Id = user._id;
-  //       })
+  console.log("inside gen user")
+  return Users.hashPassword("password")
+        .then(function(hash) {
+          return { username: "meron93", password: hash };
+        })
+        .then(function(userData) {
+          return Users.create(userData);
+        })
+        .then(function(user) {
+          console.log("genUser: " + user);
+          Id = user._id;
+        })
 };
 
 function tearDownDb() {
@@ -61,44 +59,42 @@ describe('Priority API resources', function() {
   before(function() {
     return runServer(TEST_DATABASE_URL);
   });
-  beforeEach(function(done) {
-    Priorities
-    .create({goal: "get this done", completed: "false", date_committed: faker.date.past()}) 
+  beforeEach(function() {
+    this.timeout(5000);
+    return Priorities
+    .create({goal: "get this done", completed: "false", date_committed: moment().format("MMM Do YYYY")}) 
     .then(function() {
-      Priorities
+      return Priorities
         .findOne()
         .then(function(prior) {
           console.log("Priori: " + prior)
           prioritydata = prior
-        })
-      })
-        .then(function() {
-          console.log("generate user working")
-          generateUserData();
-        })
-    .then(function() {
+        }).then(function() {
+        console.log("generate user working")
+        return generateUserData();
+      }).then(function() {
       console.log("should be seeing this after generate user")
-      Users
+      return Users
       .findOne()
       .then(function(user) {
         console.log("findONE user: " + user)
         console.log("MADE IT")
-        user._priorities.push(prioritydata);
-        user.save(err => {
+        console.log("prior to be pushed: " + prioritydata);
+        buffpriority = new Buffer(prioritydata);
+        user._priorities.push(buffpriority);
+        return user.save(err => {
           if (err) {
-            return res.status(400);
+            console.log("save error: " + err);
           }
+          console.log("made it past user.save");
           user.populate('Priorities', (err) => {
             if (err) {
-              return res.status(400);
+              console.log("Populate err: " + err);
             }
           })
-          res.status(201).json(priority);
         })
-      })
-    })
-    .then(function() {
-      chai.request(app)
+      }).then(function() {
+        return chai.request(app)
         .post('/users/login')
         .set('Content-Type', 'application/json')
         //.set('Cookie', 'name=cookie-monster')
@@ -106,8 +102,10 @@ describe('Priority API resources', function() {
         .end(function(err, res) {
           console.log("res.headers" + res.headers['set-cookie']);
           Cookies = res.headers['set-cookie'].pop().split(';')[0].split('=')[1];
-          done();
+          //done();
         })
+      })
+    })
     })
   });  
   afterEach(function() {
@@ -118,7 +116,7 @@ describe('Priority API resources', function() {
   })
 
   describe('GET endpoint', function() {
-
+    this.timeout(5000);
     it('should list all priorities for user', function() {
       var req = chai.request(app).get('/priorities/all');
         let res;
@@ -174,24 +172,20 @@ describe('Priority API resources', function() {
     });
 
     it('should add a priority', function() {
-      priorityData = generatePriorityData();
-      return chai.request(app)
-        .post('/priorities/create')
-        req.cookies = Cookies
-        .send(priorityData)
-        .then(function(res) {
-
+      const priorityInfo = generatePriorityData();
+      var req = chai.request(app).post('/priorities/create');
+      req.cookies = Cookies;
+      req.send(priorityInfo);
+      return req.then(function(res) {
           res.should.have.status(201);
           res.should.be.json;
           res.body.should.be.a('object');
           res.body.should.include.keys(
             '_id', 'completed', 'goal', 'date_committed');
-          res.body.goal.should.equal(newPriority.goal);
-          res.body.completed.should.equal(newPriority.completed);
+          res.body.goal.should.equal(priorityInfo.goal);
+          res.body.completed.should.equal(priorityInfo.completed);
           res.body._id.should.not.be.null;
-
         });
-
     });
   });
 
