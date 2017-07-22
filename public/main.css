@@ -25,20 +25,25 @@ body {
 }
 
 #loginData {
-  padding: 15% 0 20% 0;
+  padding: 10% 0 20% 0;
 }
 
 .welcomeMessage {
-  margin-bottom: 20%;
+  margin-bottom: 10%;
   color: #F0F0F0;
 }
 
-#sign-up-button, #login-button {
+#sign-up-button, #login-button, .welcomeColor{
   color: #F0F0F0;
 }
 
 #signup-form {
   padding: 15% 0 20% 0;
+}
+
+#myChart {
+  width: 50%; 
+  height: 50%;
 }
 
 

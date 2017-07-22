@@ -35,6 +35,7 @@ prioritiesRouter.get('/all', isAuthenticated, (req, res) => {
 
 prioritiesRouter.post('/create', isAuthenticated, (req, res) => {
   console.log("req.user: " + req.user)
+  console.log("hello thereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
   const requiredFields = ['goal', 'completed'];
   for (var i=0; i<requiredFields.length; i++) {
     var field = requiredFields[i];

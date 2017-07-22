@@ -156,7 +156,8 @@ userRouter.post('/login', passport.authenticate('local', {
   });
 
 userRouter.get('/login', function(req, res) {
-  res.send("bad login")
+  req.flash("info", "bad login");
+  res.send("bad login");
 });
 
 userRouter.get('/logout', function(req, res){

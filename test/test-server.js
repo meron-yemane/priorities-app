@@ -13,14 +13,9 @@ const {TEST_DATABASE_URL} = require('../config');
 chai.use(chaiHttp);
 
 function seedPriorityData() {
-  //return generateUserData()
-  // .then(function(userData) {
-  //   Users.create(userData);
-  // })
+}
 
-  //.then(function() {
-    //const seedData = [];
-
+function generatePriorities() {
   for (let i=1; i<=5; i++) {
     return chai.request(app)
       .post('/priorities/create')
@@ -37,14 +32,22 @@ function generatePriorityData() {
 }
 
 function generateUserData() {
-  return Users.hashPassword("password")
-        .then(function(hash) {
-            return { username: "meron93", password: hash };
-        })
-        .then(function(userData) {
-          Users.create(userData);
-        })
-}
+  return chai.request(app)
+  .post('/users/')
+  .send({username: "meron93", password: "password", firstName: "Meron", lastName: "Yemane"});
+
+  // return Users.hashPassword("password")
+  //       .then(function(hash) {
+  //           return { username: "meron93", password: hash };
+  //       })
+  //       .then(function(userData) {
+  //         Users.create(userData);
+  //       })
+  //       .then(function(user) {
+  //         console.log("genUser: " + user);
+  //         Id = user._id;
+  //       })
+};
 
 function tearDownDb() {
   console.warn('Deleting database');
@@ -52,14 +55,48 @@ function tearDownDb() {
 }
 
 var Cookies;
+var prioritydata;
 
 describe('Priority API resources', function() {
   before(function() {
     return runServer(TEST_DATABASE_URL);
   });
   beforeEach(function(done) {
-    //seedPriorityData()
-    generateUserData()
+    Priorities
+    .create({goal: "get this done", completed: "false", date_committed: faker.date.past()}) 
+    .then(function() {
+      Priorities
+        .findOne()
+        .then(function(prior) {
+          console.log("Priori: " + prior)
+          prioritydata = prior
+        })
+      })
+        .then(function() {
+          console.log("generate user working")
+          generateUserData();
+        })
+    .then(function() {
+      console.log("should be seeing this after generate user")
+      Users
+      .findOne()
+      .then(function(user) {
+        console.log("findONE user: " + user)
+        console.log("MADE IT")
+        user._priorities.push(prioritydata);
+        user.save(err => {
+          if (err) {
+            return res.status(400);
+          }
+          user.populate('Priorities', (err) => {
+            if (err) {
+              return res.status(400);
+            }
+          })
+          res.status(201).json(priority);
+        })
+      })
+    })
     .then(function() {
       chai.request(app)
         .post('/users/login')
@@ -67,15 +104,12 @@ describe('Priority API resources', function() {
         //.set('Cookie', 'name=cookie-monster')
         .send({username: 'meron93', password: 'password'})
         .end(function(err, res) {
-          console.log("res.headers" + res.headers['set-cookie'])
+          console.log("res.headers" + res.headers['set-cookie']);
           Cookies = res.headers['set-cookie'].pop().split(';')[0].split('=')[1];
           done();
         })
     })
-    .then(function() {
-      seedPriorityData();  
-    })
-  });
+  });  
   afterEach(function() {
     return tearDownDb();
   });

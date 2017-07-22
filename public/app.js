@@ -2,6 +2,9 @@ $(document).ready(function() {
   let currentId;
   let currentGoal;
 
+  $(".navbar-nav li a").click(function(event) {
+    $(".navbar-collapse").collapse('hide');
+  });
   $("#signup, #homepage, #progresspage").hide();
 
   $(document).on("click", "#sign-up-button", function() {
@@ -115,6 +118,7 @@ $(document).ready(function() {
       var ctx = document.getElementById('myChart').getContext('2d');
       //ctx.width = 30;
       //ctx.height = 30;
+      Chart.defaults.global.defaultFontSize = 20;
       var chart = new Chart(ctx, {
       // The type of chart we want to create
       type: 'pie',

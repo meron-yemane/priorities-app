@@ -42,14 +42,13 @@ app.use(require('express-session')({
 }));
 
 
-app.use(flash());
-
 
 
 //response.setHeader('Set-Cookie', ['type=ninja', 'language=javascript']);
 
 app.use(passport.initialize());//required to initialize passport
 app.use(passport.session());//required for persistent login sessions
+app.use(flash());
 
 app.use('/users/', userRouter);
 app.use('/priorities/', prioritiesRouter);
