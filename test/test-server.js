@@ -5,6 +5,7 @@ const faker = require('faker');
 const mongoose = require('mongoose');
 const moment = require('moment');
 
+
 const {app, runServer, closeServer} = require('../server');
 const should = chai.should();
 const {TEST_DATABASE_URL} = require('../config');
@@ -13,8 +14,6 @@ const {TEST_DATABASE_URL} = require('../config');
 
 chai.use(chaiHttp);
 
-function seedPriorityData() {
-}
 
 function generatePriorities() {
   for (let i=1; i<=5; i++) {
@@ -33,17 +32,13 @@ function generatePriorityData() {
 }
 
 function generateUserData() {
-  console.log("inside gen user")
+  //console.log("inside gen user")
   return Users.hashPassword("password")
         .then(function(hash) {
           return { username: "meron93", password: hash };
         })
         .then(function(userData) {
           return Users.create(userData);
-        })
-        .then(function(user) {
-          console.log("genUser: " + user);
-          Id = user._id;
         })
 };
 
@@ -59,69 +54,55 @@ describe('Priority API resources', function() {
   before(function() {
     return runServer(TEST_DATABASE_URL);
   });
-  beforeEach(function() {
+  beforeEach(function(done) {
     this.timeout(5000);
-    return Priorities
-    .create({goal: "get this done", completed: "false", date_committed: moment().format("MMM Do YYYY")}) 
+    generateUserData()
     .then(function() {
-      return Priorities
-        .findOne()
-        .then(function(prior) {
-          console.log("Priori: " + prior)
-          prioritydata = prior
-        }).then(function() {
-        console.log("generate user working")
-        return generateUserData();
-      }).then(function() {
-      console.log("should be seeing this after generate user")
-      return Users
-      .findOne()
-      .then(function(user) {
-        console.log("findONE user: " + user)
-        console.log("MADE IT")
-        console.log("prior to be pushed: " + prioritydata);
-        buffpriority = new Buffer(prioritydata);
-        user._priorities.push(buffpriority);
-        return user.save(err => {
-          if (err) {
-            console.log("save error: " + err);
-          }
-          console.log("made it past user.save");
-          user.populate('Priorities', (err) => {
-            if (err) {
-              console.log("Populate err: " + err);
-            }
+      return Priorities.create({goal: "get this done", completed: "false", date_committed: moment().format("MMM Do YYYY")})
+        .then(function(priority) {
+          prioritydata = priority
+          //console.log("priority: " + priority)
+          return Users
+          .findOne()
+          .then(function(user) {
+            //console.log("findOne user: " + user);
+            user._priorities.push(prioritydata); 
+            //console.log(user)
+            user.save().then(function() {
+              //console.log("Inside save")
+              return user.populate('Priorities')
+            }).then(function() {
+              //console.log("logging user in")
+              chai.request(app)
+              .post('/users/login')
+              .set('Content-Type', 'application/json')
+              //.set('Cookie', 'name=cookie-monster')
+              .send({username: 'meron93', password: 'password'})
+              .end(function(err, res) {
+                //console.log("res.headers" + res.headers['set-cookie']);
+                Cookies = res.headers['set-cookie'].pop().split(';');
+                done();
+                //[0].split('=')[1];
+              })
+            })
           })
         })
-      }).then(function() {
-        return chai.request(app)
-        .post('/users/login')
-        .set('Content-Type', 'application/json')
-        //.set('Cookie', 'name=cookie-monster')
-        .send({username: 'meron93', password: 'password'})
-        .end(function(err, res) {
-          console.log("res.headers" + res.headers['set-cookie']);
-          Cookies = res.headers['set-cookie'].pop().split(';')[0].split('=')[1];
-          //done();
-        })
-      })
     })
-    })
-  });  
+  });
   afterEach(function() {
     return tearDownDb();
   });
   after(function() {
     return closeServer();
-  })
+  });
 
   describe('GET endpoint', function() {
     this.timeout(5000);
-    it('should list all priorities for user', function() {
+    it.only('should list all priorities for user', function() {
       var req = chai.request(app).get('/priorities/all');
         let res;
         req.cookies = Cookies;
-        console.log("cookies: " + req.cookies);
+        //console.log("cookies: " + req.cookies);
         return req.then(function(_res) {
           res = _res;
           res.should.have.status(200);

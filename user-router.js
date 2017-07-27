@@ -68,7 +68,7 @@ const localStrategy = new LocalStrategy({
   });
 
 passport.use(localStrategy);
-passport.use(basicStrategy);
+//passport.use(basicStrategy);
 
 // serializeUser ensures that only user's id is saved in the session, and user's
 // id is later used to retrieve the whole object via deserializeUser function.
@@ -83,7 +83,7 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
-userRouter.use(passport.initialize());
+//userRouter.use(passport.initialize());
 
 userRouter.post('/', (req, res) => {
   if (!req.body) {

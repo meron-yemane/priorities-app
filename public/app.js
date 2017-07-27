@@ -5,6 +5,7 @@ $(document).ready(function() {
   $(".navbar-nav li a").click(function(event) {
     $(".navbar-collapse").collapse('hide');
   });
+  
   $("#signup, #homepage, #progresspage").hide();
 
   $(document).on("click", "#sign-up-button", function() {

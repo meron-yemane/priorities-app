@@ -11,6 +11,7 @@ const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
 const assert = require('assert');
+const LocalStrategy  = require('passport-local');
 //mongoose.Promise = global.Promise; 
 
 const app = express();
@@ -41,7 +42,44 @@ app.use(require('express-session')({
     saveUninitialized: true
 }));
 
+const localStrategy = new LocalStrategy({
+  session: true,
+  passReqToCallback: true
+  },
+  function(req, username, password, done) {
+    Users.findOne({username: username}, function (err, user) {
+      if (err) { 
+        return done(err); 
+      }
+      if (!user) { 
+        return done(null, false, {message: 'Incorrect username.'});
+      }
+      user 
+        .validatePassword(password)
+        .then(valid => {
+          if (!valid) {
+            return done(null, false, {message: 'Ooops! Wrong passwword.'}); 
+          }
+          return done(null, user);
+        })
+    });
+  });
 
+passport.use(localStrategy);
+//passport.use(basicStrategy);
+
+// serializeUser ensures that only user's id is saved in the session, and user's
+// id is later used to retrieve the whole object via deserializeUser function.
+passport.serializeUser(function(user, done) {
+  done(null, user.id);                       
+});
+
+passport.deserializeUser(function(id, done) {
+  Users
+  .findById(id, function(err, user) {
+    done(err, user);
+  });
+});
 
 
 //response.setHeader('Set-Cookie', ['type=ninja', 'language=javascript']);

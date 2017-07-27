@@ -11,7 +11,7 @@ prioritiesRouter.use(jsonParser);
 
 // Check if user is authenticated
 function isAuthenticated(req, res, next) {
-  console.log(req.user)
+  //console.log(req.user)
     if (req.user) {
         return next();
     }
@@ -20,7 +20,7 @@ function isAuthenticated(req, res, next) {
 }
 
 prioritiesRouter.get('/all', isAuthenticated, (req, res) => {
-  console.log(req.user.id); 
+  console.log("req.user.id: " + req.user.id); 
   Users
     .findById(req.user.id)
     .populate('_priorities')
