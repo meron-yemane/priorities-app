@@ -104,50 +104,55 @@ $(document).ready(function() {
       url: "/priorities/all",
       type: "GET"
     }).done(function(data, status) {
-      console.log("data: " + data.length)
-      var completed = 0;
-      for (goal=0; goal<data.length; goal++) {
-        if (data[goal].completed === "true") {
-        completed++
+      if (data.length > 0 ) {
+        console.log("data: " + data.length)
+        var completed = 0;
+        for (goal=0; goal<data.length; goal++) {
+          if (data[goal].completed === "true") {
+          completed++
+          };
         };
-      };
-      console.log("completed: " + completed)
-      var percentage = completed/data.length * 100;
-      var html = "<h2 class='text-center'> You've succeeded in completing " + Math.round(percentage) + "% of your most important goals.</h2>";
-      $("#progressStats").html(html);
-      $(document).ready(function() {
-      var ctx = document.getElementById('myChart').getContext('2d');
-      //ctx.width = 30;
-      //ctx.height = 30;
-      Chart.defaults.global.defaultFontSize = 20;
-      var chart = new Chart(ctx, {
-      // The type of chart we want to create
-      type: 'pie',
 
-      // The data for our dataset
-      data: {
-        labels: ["Completed Priorities", "Incompleted Priorities"],
-        datasets: [{
-          label: "Priority Performance",
-          backgroundColor: [
-          'rgba(76, 174, 86, 1)',
-          'rgba(196, 69, 75, 1)'
-          ],
-          borderColor: [
-          'rgba(76, 174, 86, 1)',
-          'rgba(196, 69, 75, 1)'
-          ],
-          data: [percentage, 100-percentage],
-        }]
-      },
+        console.log("completed: " + completed)
+        var percentage = completed/data.length * 100;
+        var html = "<h2 class='text-center'> You've succeeded in completing " + Math.round(percentage) + "% of your most important goals.</h2>";
+        $("#progressStats").html(html);
+        $(document).ready(function() {
+        var ctx = document.getElementById('myChart').getContext('2d');
+        //ctx.width = 30;
+        //ctx.height = 30;
+        Chart.defaults.global.defaultFontSize = 20;
+        var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'pie',
 
-      // Configuration options go here
-      options: {
-        responsive: false,
-        maintainAspectRatio: true
+        // The data for our dataset
+        data: {
+          labels: ["Completed Priorities", "Incompleted Priorities"],
+          datasets: [{
+            label: "Priority Performance",
+            backgroundColor: [
+            'rgba(76, 174, 86, 1)',
+            'rgba(196, 69, 75, 1)'
+            ],
+            borderColor: [
+            'rgba(76, 174, 86, 1)',
+            'rgba(196, 69, 75, 1)'
+            ],
+            data: [percentage, 100-percentage],
+          }]
+        },
+
+        // Configuration options go here
+        options: {
+          responsive: false,
+          maintainAspectRatio: true
+        }
+        });
+        });
+      } else {
+        $("progressStats").html("<h2>No goals to report</h2>");
       }
-      });
-      });
       $("#progresspage").show();
     }).fail(function(err) {
       console.log(err);
