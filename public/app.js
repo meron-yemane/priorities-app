@@ -151,7 +151,7 @@ $(document).ready(function() {
         });
         });
       } else {
-        $("progressStats").html("<h2>No goals to report</h2>");
+        $("#progressStats").html("<h2>No goals to report.</h2>");
       }
       $("#progresspage").show();
     }).fail(function(err) {
